@@ -26,3 +26,16 @@ public:
 	void transform(CvScalar& s);
 	string getName();
 };
+
+class HistogramMatching : public Transformer
+{
+	int			LUTable[TABLE_SIZE][3];
+	IplImage	*srcImg;
+	IplImage	*targetImg;
+
+public:
+	HistogramMatching(IplImage *src, IplImage *tar);
+
+	void transform(CvScalar& s);
+	string getName();
+};
