@@ -1,0 +1,28 @@
+#include <iostream>
+#include <string>
+#include <opencv/cv.h>
+#include <opencv/highgui.h> 
+using namespace std;
+using namespace cv;
+
+const int TABLE_SIZE = 300;
+const int MAX_COLOR = 255;
+
+class Transformer
+{
+public:
+	virtual void transform(CvScalar& s) = 0;
+	virtual string getName() = 0;
+};
+
+class LinearBrightness : public Transformer
+{
+	int LUTable[TABLE_SIZE];
+	int bright;
+
+public:
+	LinearBrightness(int b);
+
+	void transform(CvScalar& s);
+	string getName();
+};

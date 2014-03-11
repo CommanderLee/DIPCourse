@@ -73,6 +73,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PointProcessing.cpp" />
+    <ClCompile Include="Transformer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="PointProcessing.h" />
+    <ClInclude Include="Transformer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

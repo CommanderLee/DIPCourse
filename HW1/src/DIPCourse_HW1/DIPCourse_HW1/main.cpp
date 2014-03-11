@@ -1,59 +1,41 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include <fstream>
-#include <string>
 #include <iostream>
 #include <opencv/cv.h>
 #include <opencv/highgui.h> 
+#include "PointProcessing.h"
 using namespace std;
+using namespace cv;
 
-int main()
+int main() 
 {
-
-	IplImage* img = 0; 
-	int height,width,step,channels;
-	uchar *data;
-	int i,j,k; 
+	IplImage *img1 = 0, *img2 = 0; 
 
 	// load an image  
-	img=cvLoadImage("G:\\Course\\Grade_Three_Spring\\DIP\\DIPCourse\\HW1\\pic\\pic1.bmp");
-	if(!img){
+	img1 = cvLoadImage("pic1.bmp");
+	if (!img1) 
+	{
 		printf("Could not load image file.\n");
 		exit(0);
 	} 
+	cvShowImage("img1", img1);
+	cvWaitKey(0);
+	
+	// increase brightness
+	img2 = cvCreateImage(cvGetSize(img1), img1->depth, img1->nChannels);
+	cvCopy(img1, img2, NULL);
 
-	// get the image data
-	height    = img->height;
-	width     = img->width;
-	//step      = img->widthStep;
-	//channels  = img->nChannels;
-	//data      = (uchar *)img->imageData;
-	printf("Processing a %dx%d image.\n",height,width);
+	printf("Increase Brightness.\n");
+	PointProcessing pps(img2, "img_Inc_Bright.bmp", new LinearBrightness(50));
+	pps.processing();
 
-	//build File to save pixel value
-	ofstream outFile_B;
-	ofstream outFile_G;
-	ofstream outFile_R;
-	outFile_B.open("out_B.txt");
-	outFile_G.open("out_G.txt");
-	outFile_R.open("out_R.txt");
+	// decrease brightness
+	img2 = cvCreateImage(cvGetSize(img1), img1->depth, img1->nChannels);
+	cvCopy(img1, img2, NULL);
 
-	//get the pixel value
-	CvScalar s;
-	for(i=0;i<height;i++) //i 代表 y 轴
-	{
-		for(j=0;j<width;j++) //j 代表 x轴
-		{
-			s=cvGet2D(img,i,j); // get the (j,i) pixel value
+	printf("Decrease Brightness.\n");
+	pps.setParam(img2, "img_Dec_Bright.bmp", new LinearBrightness(-50));
+	pps.processing();
 
-			outFile_B<<s.val[0]<<" ";
-			outFile_G<<s.val[1]<<" ";
-			outFile_R<<s.val[2]<<" "; 
-		}
-		outFile_B<<endl;
-		outFile_G<<endl;
-		outFile_R<<endl;
-	}
+	cvDestroyWindow("img1");
+	cvReleaseImage(&img1);
 	return 0; 
 }
