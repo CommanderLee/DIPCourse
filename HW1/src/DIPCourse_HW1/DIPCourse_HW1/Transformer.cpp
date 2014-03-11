@@ -1,3 +1,4 @@
+#include <cmath>
 #include "Transformer.h"
 
 using namespace std;
@@ -124,4 +125,36 @@ void HistogramMatching::transform(CvScalar& s)
 string HistogramMatching::getName()
 {
 	return "Histogram Matching";
+}
+
+// Fog Dealer
+FogDealer::FogDealer()
+{
+	// Gamma Decrease
+	double gamma = 0.7;
+	for (int i = 0; i <= MAX_COLOR; ++i)
+	{
+		LUTable[i] = (int)(255 * (std::pow(i / 255.0, 1 / gamma)));
+	}
+
+	// Increase Contrast
+	double k = 1.6;
+	for (int i = 0; i <= MAX_COLOR; ++i)
+	{
+		LUTable[i] = max(0, (int)(k * (LUTable[i] - 127) + 127));
+		LUTable[i] = min(LUTable[i], MAX_COLOR);
+	}
+}
+
+void FogDealer::transform(CvScalar& s)
+{
+	for (int k = 0; k < 3; ++k)
+	{
+		s.val[k] = LUTable[int(s.val[k])];
+	}
+}
+
+string FogDealer::getName()
+{
+	return "De-Fog";
 }

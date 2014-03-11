@@ -56,8 +56,28 @@ int main()
 	cvDestroyWindow("Target Image");
 	cvReleaseImage(&targetImg);
 	
-	// END
 	cvDestroyWindow("img1");
 	cvReleaseImage(&oldImg);
+
+	// De-Fog
+	IplImage *fog = 0;
+	fog = cvLoadImage("Fog3.bmp");
+	if (!fog)
+	{
+		printf("Could not load image file.\n");
+		exit(0);
+	}
+	cvShowImage("Fog Image", fog);
+	cvWaitKey(0);
+
+	newImg = cvCreateImage(cvGetSize(fog), fog->depth, fog->nChannels);
+	cvCopy(fog, newImg, NULL);
+
+	printf("De-Fog.\n");
+	pps.setParam(newImg, "img_De-6.bmp", new FogDealer());
+	pps.processing();
+
+	cvDestroyWindow("Fog Image");
+	cvReleaseImage(&fog);
 	return 0; 
 }

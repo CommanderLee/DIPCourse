@@ -39,3 +39,13 @@ public:
 	void transform(CvScalar& s);
 	string getName();
 };
+
+class FogDealer : public Transformer
+{
+	int LUTable[TABLE_SIZE];
+public:
+	FogDealer();
+
+	void transform(CvScalar& s);
+	string getName();
+};
