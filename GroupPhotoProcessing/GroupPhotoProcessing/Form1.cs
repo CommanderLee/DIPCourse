@@ -41,6 +41,10 @@ namespace GroupPhotoProcessing
         // 2nd Tab: List of Group/Single Buttons
         List<Button>            imgGroupBtnList, imgSingleBtnList;
 
+        List<Image<Bgr, byte>>  imgModifiedList;
+
+        List<Point>             clickList;
+
         int                     currImgIdFusion;
 
         public Form1()
@@ -62,8 +66,10 @@ namespace GroupPhotoProcessing
             buttonImgType.Text = currType.ToString();
 
             // 2nd Tab
+            imgModifiedList = new List<Image<Bgr, byte>>();
             imgGroupBtnList = new List<Button>();
             imgSingleBtnList = new List<Button>();
+            clickList = new List<Point>();
 
             currImgIdFusion = -1;
         }
@@ -334,6 +340,10 @@ namespace GroupPhotoProcessing
 
             for (var i = 0; i < imgBtnList.Count; ++i)
             {
+                // Copy image
+                imgModifiedList.Add(imgList[i].Copy());
+
+                // Copy buttons
                 Panel parentPanel;
                 List<Button> parentList;
                 if (imgTypeList[i] == ImageTypes.Group)
@@ -364,6 +374,7 @@ namespace GroupPhotoProcessing
 
         /// <summary>
         /// Select an image by clicking corresponding button on the 2nd Tab (Image Fusion)
+        /// Show the modified one
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -373,7 +384,7 @@ namespace GroupPhotoProcessing
             Console.WriteLine("Click on Button No." + btnId);
             if (btnId >= 0 && btnId < imgList.Count)
             {
-                pictureBoxImgFusion.Image = imgList[btnId].ToBitmap();
+                pictureBoxImgFusion.Image = imgModifiedList[btnId].ToBitmap();
                 currImgIdFusion = btnId;
                 labelStatusFusion.Text = imgBtnList[btnId].Text;
             }
@@ -384,23 +395,106 @@ namespace GroupPhotoProcessing
         }
 
         /// <summary>
-        /// Draw Boundary (Rectangular) on the image. Log and paint to Red
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void buttonDrawBoundary_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        /// <summary>
         /// Clear Boundary of the image
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void buttonClearBoundary_Click(object sender, EventArgs e)
         {
+            if (currImgId >= 0 && imgModifiedList.Count > 0)
+            {
+                imgModifiedList[currImgIdFusion] = imgList[currImgIdFusion].Copy();
+                clickList.Clear();
+            }
+        }
 
+        /// <summary>
+        /// Start Image Fusion
+        /// Based on Poisson Image Editing. P Perez et. al. SIGGRAPH 2003
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void buttonImageFusion_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        /// <summary>
+        /// Draw Boundary - Actually, just click on the top-left & bottom-right corner
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void pictureBoxImgFusion_Click(object sender, EventArgs e)
+        {
+            var mouseEvent = e as MouseEventArgs;
+            if (mouseEvent != null && currImgIdFusion >= 0)
+            {
+                // X: column number, Y: row number.
+                Console.WriteLine(String.Format("Click on X:{0}, Y:{1}", mouseEvent.X, mouseEvent.Y));
+
+                // If we still need more points
+                if (clickList.Count < 2)
+                {
+                    // Inverse the mouse event order to fit the OpenCV order of index.
+                    // So now x: row number, y: column number
+                    Point myPoint = new Point(mouseEvent.Y, mouseEvent.X);
+                    clickList.Add(myPoint);
+
+                    // Paint that point as red
+                    imgModifiedList[currImgIdFusion][myPoint.X, myPoint.Y] = new Bgr(Color.Red);
+
+                    // Mark the Boundary
+                    if (clickList.Count == 2)
+                    {
+                        Point pntTopLeft = clickList[0];
+                        Point pntBottomRight = clickList[1];
+                        int selHeight = pntBottomRight.X - pntTopLeft.X + 1;
+                        int selWidth = pntBottomRight.Y - pntTopLeft.Y + 1;
+
+                        Image<Bgr, byte> selectedImg = new Image<Bgr, byte>(selWidth, selHeight);
+                        for (var r = 0; r < selHeight; ++r)
+                            for (var c = 0; c < selWidth; ++c)
+                                selectedImg[r, c] = imgList[currImgIdFusion][r + pntTopLeft.X, c + pntTopLeft.Y];
+
+                        // Paint the boundary
+                        // +----------+
+                        // +          +
+                        // +----------+
+                        for (var r = pntTopLeft.X; r <= pntBottomRight.X; ++r)
+                        {
+                            //boundryList.Add(new Point(i, pointA.Y));
+                            //boundryList.Add(new Point(i, pointB.Y));
+
+                            imgModifiedList[currImgIdFusion][r, pntTopLeft.Y] = new Bgr(Color.Red);
+                            imgModifiedList[currImgIdFusion][r, pntBottomRight.Y] = new Bgr(Color.Red);
+
+                            //pointID[i, pointA.Y] = -1;
+                            //pointID[i, pointB.Y] = -1;
+                        }
+                        // -++++++++++-
+                        // -          -
+                        // -++++++++++-
+                        for (var c = pntTopLeft.Y + 1; c < pntBottomRight.Y; ++c)
+                        {
+                            //boundryList.Add(new Point(pointA.X, j));
+                            //boundryList.Add(new Point(pointB.X, j));
+
+                            imgModifiedList[currImgIdFusion][pntTopLeft.X, c] = new Bgr(Color.Red);
+                            imgModifiedList[currImgIdFusion][pntBottomRight.X, c] = new Bgr(Color.Red);
+
+                            //pointID[pointA.X, j] = -1;
+                            //pointID[pointB.X, j] = -1;
+                        }
+
+                        //selectedImg.Save("test1.bmp");
+
+                        //Image<Bgr, byte> zoomSelectedImg = selectedImg.Resize(1.6, Emgu.CV.CvEnum.INTER.CV_INTER_LINEAR);
+                        //zoomSelectedImg.Save("test2.bmp");
+                    }
+
+                    pictureBoxImgFusion.Image = imgModifiedList[currImgIdFusion].ToBitmap();
+                }
+            }
         }
     }
 }

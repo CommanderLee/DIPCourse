@@ -58,11 +58,11 @@
             this.panelGroupImgNames = new System.Windows.Forms.Panel();
             this.labelGroup = new System.Windows.Forms.Label();
             this.panelImgMethodsFusion = new System.Windows.Forms.Panel();
+            this.buttonImageFusion = new System.Windows.Forms.Button();
+            this.buttonClearBoundary = new System.Windows.Forms.Button();
+            this.labelStatusFusion = new System.Windows.Forms.Label();
             this.buttonFusionPreparing = new System.Windows.Forms.Button();
             this.tabStiching = new System.Windows.Forms.TabPage();
-            this.labelStatusFusion = new System.Windows.Forms.Label();
-            this.buttonDrawBoundary = new System.Windows.Forms.Button();
-            this.buttonClearBoundary = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPoint.SuspendLayout();
             this.panelImg.SuspendLayout();
@@ -352,6 +352,7 @@
             // 
             // panelImgFusion
             // 
+            this.panelImgFusion.AutoScroll = true;
             this.panelImgFusion.BackColor = System.Drawing.Color.LightSkyBlue;
             this.panelImgFusion.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.panelImgFusion.Controls.Add(this.pictureBoxImgFusion);
@@ -365,9 +366,10 @@
             this.pictureBoxImgFusion.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxImgFusion.Name = "pictureBoxImgFusion";
             this.pictureBoxImgFusion.Size = new System.Drawing.Size(1525, 755);
-            this.pictureBoxImgFusion.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBoxImgFusion.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.pictureBoxImgFusion.TabIndex = 0;
             this.pictureBoxImgFusion.TabStop = false;
+            this.pictureBoxImgFusion.Click += new System.EventHandler(this.pictureBoxImgFusion_Click);
             // 
             // panelSingleImgNames
             // 
@@ -413,14 +415,46 @@
             // 
             this.panelImgMethodsFusion.BackColor = System.Drawing.Color.AliceBlue;
             this.panelImgMethodsFusion.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panelImgMethodsFusion.Controls.Add(this.buttonImageFusion);
             this.panelImgMethodsFusion.Controls.Add(this.buttonClearBoundary);
-            this.panelImgMethodsFusion.Controls.Add(this.buttonDrawBoundary);
             this.panelImgMethodsFusion.Controls.Add(this.labelStatusFusion);
             this.panelImgMethodsFusion.Controls.Add(this.buttonFusionPreparing);
             this.panelImgMethodsFusion.Location = new System.Drawing.Point(10, 10);
             this.panelImgMethodsFusion.Name = "panelImgMethodsFusion";
             this.panelImgMethodsFusion.Size = new System.Drawing.Size(1530, 50);
             this.panelImgMethodsFusion.TabIndex = 1;
+            // 
+            // buttonImageFusion
+            // 
+            this.buttonImageFusion.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.buttonImageFusion.Location = new System.Drawing.Point(390, 3);
+            this.buttonImageFusion.Name = "buttonImageFusion";
+            this.buttonImageFusion.Size = new System.Drawing.Size(130, 40);
+            this.buttonImageFusion.TabIndex = 5;
+            this.buttonImageFusion.Text = "Image Fusion";
+            this.buttonImageFusion.UseVisualStyleBackColor = true;
+            this.buttonImageFusion.Click += new System.EventHandler(this.buttonImageFusion_Click);
+            // 
+            // buttonClearBoundary
+            // 
+            this.buttonClearBoundary.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.buttonClearBoundary.Location = new System.Drawing.Point(250, 3);
+            this.buttonClearBoundary.Name = "buttonClearBoundary";
+            this.buttonClearBoundary.Size = new System.Drawing.Size(130, 40);
+            this.buttonClearBoundary.TabIndex = 4;
+            this.buttonClearBoundary.Text = "Clear Boundary";
+            this.buttonClearBoundary.UseVisualStyleBackColor = true;
+            this.buttonClearBoundary.Click += new System.EventHandler(this.buttonClearBoundary_Click);
+            // 
+            // labelStatusFusion
+            // 
+            this.labelStatusFusion.AutoSize = true;
+            this.labelStatusFusion.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.labelStatusFusion.Location = new System.Drawing.Point(120, 8);
+            this.labelStatusFusion.Name = "labelStatusFusion";
+            this.labelStatusFusion.Size = new System.Drawing.Size(55, 29);
+            this.labelStatusFusion.TabIndex = 2;
+            this.labelStatusFusion.Text = "N/A";
             // 
             // buttonFusionPreparing
             // 
@@ -442,38 +476,6 @@
             this.tabStiching.Text = "ImageStiching";
             this.tabStiching.UseVisualStyleBackColor = true;
             // 
-            // labelStatusFusion
-            // 
-            this.labelStatusFusion.AutoSize = true;
-            this.labelStatusFusion.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.labelStatusFusion.Location = new System.Drawing.Point(120, 8);
-            this.labelStatusFusion.Name = "labelStatusFusion";
-            this.labelStatusFusion.Size = new System.Drawing.Size(55, 29);
-            this.labelStatusFusion.TabIndex = 2;
-            this.labelStatusFusion.Text = "N/A";
-            // 
-            // buttonDrawBoundary
-            // 
-            this.buttonDrawBoundary.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.buttonDrawBoundary.Location = new System.Drawing.Point(250, 3);
-            this.buttonDrawBoundary.Name = "buttonDrawBoundary";
-            this.buttonDrawBoundary.Size = new System.Drawing.Size(130, 40);
-            this.buttonDrawBoundary.TabIndex = 3;
-            this.buttonDrawBoundary.Text = "Draw Boundary";
-            this.buttonDrawBoundary.UseVisualStyleBackColor = true;
-            this.buttonDrawBoundary.Click += new System.EventHandler(this.buttonDrawBoundary_Click);
-            // 
-            // buttonClearBoundary
-            // 
-            this.buttonClearBoundary.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.buttonClearBoundary.Location = new System.Drawing.Point(390, 3);
-            this.buttonClearBoundary.Name = "buttonClearBoundary";
-            this.buttonClearBoundary.Size = new System.Drawing.Size(130, 40);
-            this.buttonClearBoundary.TabIndex = 4;
-            this.buttonClearBoundary.Text = "Clear Boundary";
-            this.buttonClearBoundary.UseVisualStyleBackColor = true;
-            this.buttonClearBoundary.Click += new System.EventHandler(this.buttonClearBoundary_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -491,6 +493,7 @@
             this.panelImgMethods.PerformLayout();
             this.tabFusion.ResumeLayout(false);
             this.panelImgFusion.ResumeLayout(false);
+            this.panelImgFusion.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxImgFusion)).EndInit();
             this.panelSingleImgNames.ResumeLayout(false);
             this.panelSingleImgNames.PerformLayout();
@@ -536,8 +539,8 @@
         private System.Windows.Forms.Panel panelImgFusion;
         private System.Windows.Forms.PictureBox pictureBoxImgFusion;
         private System.Windows.Forms.Label labelStatusFusion;
-        private System.Windows.Forms.Button buttonDrawBoundary;
         private System.Windows.Forms.Button buttonClearBoundary;
+        private System.Windows.Forms.Button buttonImageFusion;
     }
 }
 
