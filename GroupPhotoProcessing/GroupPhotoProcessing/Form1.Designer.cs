@@ -38,7 +38,7 @@
             this.buttonContrastInc = new System.Windows.Forms.Button();
             this.buttonBrightnessDec = new System.Windows.Forms.Button();
             this.buttonBrightnessInc = new System.Windows.Forms.Button();
-            this.labelImgName = new System.Windows.Forms.Label();
+            this.labelStatus = new System.Windows.Forms.Label();
             this.buttonLoad = new System.Windows.Forms.Button();
             this.tabFusion = new System.Windows.Forms.TabPage();
             this.tabStiching = new System.Windows.Forms.TabPage();
@@ -126,7 +126,7 @@
             this.panelImgMethods.Controls.Add(this.buttonContrastInc);
             this.panelImgMethods.Controls.Add(this.buttonBrightnessDec);
             this.panelImgMethods.Controls.Add(this.buttonBrightnessInc);
-            this.panelImgMethods.Controls.Add(this.labelImgName);
+            this.panelImgMethods.Controls.Add(this.labelStatus);
             this.panelImgMethods.Controls.Add(this.buttonLoad);
             this.panelImgMethods.Location = new System.Drawing.Point(10, 10);
             this.panelImgMethods.Name = "panelImgMethods";
@@ -169,15 +169,15 @@
             this.buttonBrightnessInc.UseVisualStyleBackColor = false;
             this.buttonBrightnessInc.Click += new System.EventHandler(this.buttonBrightnessInc_Click);
             // 
-            // labelImgName
+            // labelStatus
             // 
-            this.labelImgName.AutoSize = true;
-            this.labelImgName.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.labelImgName.Location = new System.Drawing.Point(100, 8);
-            this.labelImgName.Name = "labelImgName";
-            this.labelImgName.Size = new System.Drawing.Size(55, 29);
-            this.labelImgName.TabIndex = 1;
-            this.labelImgName.Text = "N/A";
+            this.labelStatus.AutoSize = true;
+            this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.labelStatus.Location = new System.Drawing.Point(100, 8);
+            this.labelStatus.Name = "labelStatus";
+            this.labelStatus.Size = new System.Drawing.Size(55, 29);
+            this.labelStatus.TabIndex = 1;
+            this.labelStatus.Text = "N/A";
             // 
             // buttonLoad
             // 
@@ -352,7 +352,7 @@
         private System.Windows.Forms.Panel panelImgMethods;
         private System.Windows.Forms.Panel panelImgNames;
         private System.Windows.Forms.Button buttonLoad;
-        private System.Windows.Forms.Label labelImgName;
+        private System.Windows.Forms.Label labelStatus;
         private System.Windows.Forms.Panel panelImg;
         private System.Windows.Forms.PictureBox pictureBoxImg;
         private System.Windows.Forms.Button buttonBrightnessInc;

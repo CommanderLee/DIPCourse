@@ -26,6 +26,8 @@ namespace GroupPhotoProcessing
         int[]                   incContrastLUT, decContrastLUT;
         int[]                   incGammaLUT, decGammaLUT;
 
+        enum Channels { Blue, Green, Red, All };
+
         public Form1()
         {
             InitializeComponent();
@@ -36,7 +38,14 @@ namespace GroupPhotoProcessing
             imgList = new List<Image<Bgr, byte>>();
             imgBtnList = new List<Button>();
 
-            // Initialize Look-Up Tables
+            initLUT();
+        }
+
+        /// <summary>
+        /// Initialize Look-Up Tables
+        /// </summary>
+        private void initLUT()
+        {
             incBrightnessLUT = new int[256];
             decBrightnessLUT = new int[256];
             incContrastLUT = new int[256];
@@ -58,7 +67,7 @@ namespace GroupPhotoProcessing
                 if (i - tmpOffset >= 0)
                     decBrightnessLUT[i] = i - tmpOffset;
                 else
-                    decBrightnessLUT[i] = 0;  
+                    decBrightnessLUT[i] = 0;
             }
 
             var tmpSlope = 1.2;
@@ -116,10 +125,14 @@ namespace GroupPhotoProcessing
                 pictureBoxImg.Image = tmpImg.ToBitmap();
                 imgList.Add(tmpImg);
 
+                // Show the imgName on status bar.
+                string shortImgName = openFile.FileName.Substring(openFile.FileName.Length - 7, 4);
+                labelStatus.Text = btnId + ":" + shortImgName;
+
                 // Add a button
                 // Magic numbers: Fixed button location/size in the 'panelImageNames'
                 Button tmpBtn = new Button();
-                tmpBtn.Text = btnId + ":" + openFile.FileName.Substring(openFile.FileName.Length - 8, 4);
+                tmpBtn.Text = labelStatus.Text;
                 tmpBtn.Name = btnId.ToString();
                 tmpBtn.Click += imgBtns_Click;
                 tmpBtn.Size = new Size(90, 45);
@@ -130,6 +143,11 @@ namespace GroupPhotoProcessing
             }
         }
 
+        /// <summary>
+        /// Select an image by clicking corresponding button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void imgBtns_Click(object sender, EventArgs e)
         {
             int btnId = Convert.ToInt32(((Button)sender).Name);
@@ -138,7 +156,7 @@ namespace GroupPhotoProcessing
             {
                 pictureBoxImg.Image = imgList[btnId].ToBitmap();
                 currImgId = btnId;
-                labelImgName.Text = imgBtnList[btnId].Text + ": ";
+                labelStatus.Text = imgBtnList[btnId].Text;
             }
             else
             {
@@ -146,86 +164,113 @@ namespace GroupPhotoProcessing
             }
         }
 
-        private void doLUT(int[] myLut)
+        /// <summary>
+        /// Do the Look-Up Table mapping.
+        /// </summary>
+        /// <param name="myLut"></param>
+        private void doLUT(int[] myLut, Channels ch)
         {
             Image<Bgr, byte> currImg = imgList[currImgId];
-            Console.WriteLine(String.Format("Do LUT: ImgNo.{0}, RxC: {1}x{2}", currImgId, currImg.Height, currImg.Width));
+            Console.WriteLine(String.Format("Do LUT: ImgNo.{0}, RxC: {1}x{2}, Channel:{3}", 
+                currImgId, currImg.Height, currImg.Width, ch));
 
-            for (var k = 0; k < 3; ++k)
-                for (var r = 0; r < currImg.Height; ++r)
-                    for (var c = 0; c < currImg.Width; ++c)
-                        currImg.Data[r, c, k] = (byte)myLut[(int)currImg.Data[r, c, k]];
+            var chSt = 0;
+            var chEd = 0;
+            if (ch == Channels.All)
+            {
+                chSt = 0;
+                chEd = 2;
+            }
+            else
+            {
+                chSt = chEd = (int)ch;
+            }
+
+            // Do the Parallel For-Loop
+            System.Threading.Tasks.Parallel.For(0, currImg.Height, (r) =>
+                {
+                    System.Threading.Tasks.Parallel.For(0, currImg.Width, (c) =>
+                        {
+                            for (var k = chSt; k <= chEd; ++k)
+                                currImg.Data[r, c, k] = (byte)myLut[(int)currImg.Data[r, c, k]];
+                        });
+                });
+
+            // Do the Sequential version
+            //for (var k = 0; k < 3; ++k)
+            //    for (var r = 0; r < currImg.Height; ++r)
+            //        for (var c = 0; c < currImg.Width; ++c)
+            //            currImg.Data[r, c, k] = (byte)myLut[(int)currImg.Data[r, c, k]];
 
             pictureBoxImg.Image = currImg.ToBitmap();
-            //imgList[currImg] = currImg;
         }
 
         /*** Point Processing: Brightness Increse/Decrese ***/
 
         private void buttonBrightnessInc_Click(object sender, EventArgs e)
         {
-            doLUT(incBrightnessLUT);
+            doLUT(incBrightnessLUT, Channels.All);
         }
 
         private void buttonBrightnessDec_Click(object sender, EventArgs e)
         {
-
+            doLUT(decBrightnessLUT, Channels.All);
         }
 
         /*** Point Processing: Contrast Increse/Decrese ***/
 
         private void buttonContrastInc_Click(object sender, EventArgs e)
         {
-
+            doLUT(incContrastLUT, Channels.All);
         }
 
         private void buttonContrastDec_Click(object sender, EventArgs e)
         {
-
+            doLUT(decContrastLUT, Channels.All);
         }
 
         /*** Point Processing: Gamma Increse/Decrese ***/
 
         private void buttonGammaInc_Click(object sender, EventArgs e)
         {
-
+            doLUT(incGammaLUT, Channels.All);
         }
 
         private void buttonGammaDec_Click(object sender, EventArgs e)
         {
-
+            doLUT(decGammaLUT, Channels.All);
         }
 
         /*** Point Processing: RGB Channel Increse/Decrese ***/
 
         private void buttonRedInc_Click(object sender, EventArgs e)
         {
-
+            doLUT(incBrightnessLUT, Channels.Red);
         }
 
         private void buttonRedDec_Click(object sender, EventArgs e)
         {
-
+            doLUT(decBrightnessLUT, Channels.Red);
         }
 
         private void buttonGreenInc_Click(object sender, EventArgs e)
         {
-
+            doLUT(incBrightnessLUT, Channels.Green);
         }
 
         private void buttonGreenDec_Click(object sender, EventArgs e)
         {
-
+            doLUT(decBrightnessLUT, Channels.Green);
         }
 
         private void buttonBlueInc_Click(object sender, EventArgs e)
         {
-
+            doLUT(incBrightnessLUT, Channels.Blue);
         }
 
         private void buttonBlueDec_Click(object sender, EventArgs e)
         {
-
+            doLUT(decBrightnessLUT, Channels.Blue);
         }
     }
 }
