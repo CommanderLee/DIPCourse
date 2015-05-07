@@ -11,22 +11,37 @@ using Emgu.CV;
 using Emgu.Util;
 using Emgu.CV.Structure;
 
+// Math.Net Numerics Library.
+// Using 'LA.Matrix' to avoid conflit with Emgu.CV.Matrix
+using MathNet.Numerics;
+using LA = MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.LinearAlgebra.Double.Solvers;
+using MathNet.Numerics.LinearAlgebra.Solvers;
+
 namespace GroupPhotoProcessing
 {
     public partial class Form1 : Form
     {
-        // List of images and their control buttons
+        enum ImageTypes { Group, Single };
+        enum Channels { Blue, Green, Red, All };
+
+        // 1st Tab: List of images, their control buttons, and their types
         List<Image<Bgr, byte>>  imgList;
         List<Button>            imgBtnList;
+        List<ImageTypes>        imgTypeList;
 
         int                     currImgId;
+        ImageTypes              currType;
 
         // Look-Up Tables
         int[]                   incBrightnessLUT, decBrightnessLUT;
         int[]                   incContrastLUT, decContrastLUT;
         int[]                   incGammaLUT, decGammaLUT;
 
-        enum Channels { Blue, Green, Red, All };
+        // 2nd Tab: List of Group/Single Buttons
+        List<Button>            imgGroupBtnList, imgSingleBtnList;
+
+        int                     currImgIdFusion;
 
         public Form1()
         {
@@ -35,11 +50,25 @@ namespace GroupPhotoProcessing
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            // 1st Tab
             imgList = new List<Image<Bgr, byte>>();
             imgBtnList = new List<Button>();
+            imgTypeList = new List<ImageTypes>();
 
             initLUT();
+
+            currImgId = -1;
+            currType = ImageTypes.Group;
+            buttonImgType.Text = currType.ToString();
+
+            // 2nd Tab
+            imgGroupBtnList = new List<Button>();
+            imgSingleBtnList = new List<Button>();
+
+            currImgIdFusion = -1;
         }
+
+        /*** 1st Tab: Point Processing ***/
 
         /// <summary>
         /// Initialize Look-Up Tables
@@ -117,34 +146,34 @@ namespace GroupPhotoProcessing
             OpenFileDialog openFile = new OpenFileDialog();
             if (openFile.ShowDialog() == DialogResult.OK)
             {
-                int btnId = imgList.Count;
-                Console.WriteLine("Button Id: " + btnId);
-
                 // Load and show
                 Image<Bgr, byte> tmpImg = new Image<Bgr, byte>(openFile.FileName);
                 pictureBoxImg.Image = tmpImg.ToBitmap();
                 imgList.Add(tmpImg);
+                currImgId = imgList.Count - 1;
+                Console.WriteLine("Button Id: " + currImgId);
 
                 // Show the imgName on status bar.
                 string shortImgName = openFile.FileName.Substring(openFile.FileName.Length - 7, 4);
-                labelStatus.Text = btnId + ":" + shortImgName;
+                labelStatus.Text = currImgId + ":" + shortImgName;
 
                 // Add a button
                 // Magic numbers: Fixed button location/size in the 'panelImageNames'
                 Button tmpBtn = new Button();
                 tmpBtn.Text = labelStatus.Text;
-                tmpBtn.Name = btnId.ToString();
+                tmpBtn.Name = currImgId.ToString();
                 tmpBtn.Click += imgBtns_Click;
                 tmpBtn.Size = new Size(90, 45);
-                tmpBtn.Location = new Point(90 * btnId, 0);
+                tmpBtn.Location = new Point(90 * currImgId, 0);
 
                 panelImgNames.Controls.Add(tmpBtn);
                 imgBtnList.Add(tmpBtn);
+                imgTypeList.Add(currType);
             }
         }
 
         /// <summary>
-        /// Select an image by clicking corresponding button
+        /// Select an image by clicking corresponding button on the 1st Tab (Point Processing)
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -157,6 +186,8 @@ namespace GroupPhotoProcessing
                 pictureBoxImg.Image = imgList[btnId].ToBitmap();
                 currImgId = btnId;
                 labelStatus.Text = imgBtnList[btnId].Text;
+                currType = imgTypeList[btnId];
+                buttonImgType.Text = currType.ToString();
             }
             else
             {
@@ -271,6 +302,105 @@ namespace GroupPhotoProcessing
         private void buttonBlueDec_Click(object sender, EventArgs e)
         {
             doLUT(decBrightnessLUT, Channels.Blue);
+        }
+
+        /// <summary>
+        /// Change current image type
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void buttonImgType_Click(object sender, EventArgs e)
+        {
+            if (currType == ImageTypes.Group)
+                currType = ImageTypes.Single;
+            else
+                currType = ImageTypes.Group;
+
+            imgTypeList[currImgId] = currType;
+            buttonImgType.Text = currType.ToString();
+        }
+
+        /*** 2nd Tab: Image Fusion ***/
+
+        private void buttonFusionPreparing_Click(object sender, EventArgs e)
+        {
+            // Clear
+            foreach (Button btn in imgGroupBtnList)
+                panelGroupImgNames.Controls.Remove(btn);
+            foreach (Button btn in imgSingleBtnList)
+                panelSingleImgNames.Controls.Remove(btn);
+            imgGroupBtnList.Clear();
+            imgSingleBtnList.Clear();
+
+            for (var i = 0; i < imgBtnList.Count; ++i)
+            {
+                Panel parentPanel;
+                List<Button> parentList;
+                if (imgTypeList[i] == ImageTypes.Group)
+                {
+                    parentPanel = panelGroupImgNames;
+                    parentList = imgGroupBtnList;
+                }
+                else
+                {
+                    parentPanel = panelSingleImgNames;
+                    parentList = imgSingleBtnList;
+                }
+
+                int btnId = parentList.Count;
+                // Add a button
+                // Magic numbers: Fixed button location/size in the 'panelGroup(Single)ImgNames'
+                Button tmpBtn = new Button();
+                tmpBtn.Text = imgBtnList[i].Text;
+                tmpBtn.Name = imgBtnList[i].Name;
+                tmpBtn.Click += imgFusionBtns_Click;
+                tmpBtn.Size = new Size(90, 45);
+                tmpBtn.Location = new Point(90 * btnId + 160, 0);
+
+                parentPanel.Controls.Add(tmpBtn);
+                parentList.Add(tmpBtn);
+            }
+        }
+
+        /// <summary>
+        /// Select an image by clicking corresponding button on the 2nd Tab (Image Fusion)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void imgFusionBtns_Click(object sender, EventArgs e)
+        {
+            int btnId = Convert.ToInt32(((Button)sender).Name);
+            Console.WriteLine("Click on Button No." + btnId);
+            if (btnId >= 0 && btnId < imgList.Count)
+            {
+                pictureBoxImgFusion.Image = imgList[btnId].ToBitmap();
+                currImgIdFusion = btnId;
+                labelStatusFusion.Text = imgBtnList[btnId].Text;
+            }
+            else
+            {
+                Console.WriteLine("Error: Image Button Index out of range.");
+            }
+        }
+
+        /// <summary>
+        /// Draw Boundary (Rectangular) on the image. Log and paint to Red
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void buttonDrawBoundary_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        /// <summary>
+        /// Clear Boundary of the image
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void buttonClearBoundary_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
