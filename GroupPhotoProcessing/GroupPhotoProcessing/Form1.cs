@@ -41,9 +41,13 @@ namespace GroupPhotoProcessing
         // 2nd Tab: List of Group/Single Buttons
         List<Button>            imgGroupBtnList, imgSingleBtnList;
 
+        // Modified images
         List<Image<Bgr, byte>>  imgModifiedList;
 
         List<Point>             clickList;
+
+        Image<Bgr, byte>        srcImg, tarImg;
+        int                     tarCenterX, tarCenterY;
 
         int                     currImgIdFusion;
 
@@ -70,6 +74,8 @@ namespace GroupPhotoProcessing
             imgGroupBtnList = new List<Button>();
             imgSingleBtnList = new List<Button>();
             clickList = new List<Point>();
+            srcImg = null;
+            tarImg = null;
 
             currImgIdFusion = -1;
         }
@@ -374,7 +380,7 @@ namespace GroupPhotoProcessing
 
         /// <summary>
         /// Select an image by clicking corresponding button on the 2nd Tab (Image Fusion)
-        /// Show the modified one
+        /// Show the modified one, and clear the clickLists
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -387,6 +393,7 @@ namespace GroupPhotoProcessing
                 pictureBoxImgFusion.Image = imgModifiedList[btnId].ToBitmap();
                 currImgIdFusion = btnId;
                 labelStatusFusion.Text = imgBtnList[btnId].Text;
+                clickList.Clear();
             }
             else
             {
@@ -405,6 +412,33 @@ namespace GroupPhotoProcessing
             {
                 imgModifiedList[currImgIdFusion] = imgList[currImgIdFusion].Copy();
                 clickList.Clear();
+                pictureBoxImgFusion.Image = imgModifiedList[currImgIdFusion].ToBitmap();
+            }
+        }
+
+        /// <summary>
+        /// Just show the raw result of image cloning.
+        /// Put a zoomed source image on the target image
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void buttonShowImg_Click(object sender, EventArgs e)
+        {
+            if (srcImg != null && tarImg != null)
+            {
+                // Zoom the source rectangular to the target rectangular
+                double zoomScale = Math.Min((double)tarImg.Width / srcImg.Width, (double)tarImg.Height / srcImg.Height);
+                Console.WriteLine("Zoom scale:" + zoomScale);
+                Image<Bgr, byte> zoomSrcImg = srcImg.Resize(zoomScale, Emgu.CV.CvEnum.INTER.CV_INTER_LINEAR);
+
+                // Assume that the user is currently watching the target image page
+                // That is, the currImgIdFusion = target image id
+                int newTopLeftX = tarCenterX - zoomSrcImg.Height / 2, newTopLeftY = tarCenterY - zoomSrcImg.Width / 2;
+                for (var r = 0; r < zoomSrcImg.Height; ++r)
+                    for (var c = 0; c < zoomSrcImg.Width; ++c)
+                        imgModifiedList[currImgIdFusion][r + newTopLeftX, c + newTopLeftY] = zoomSrcImg[r, c];
+
+                pictureBoxImgFusion.Image = imgModifiedList[currImgIdFusion].ToBitmap();
             }
         }
 
@@ -420,7 +454,7 @@ namespace GroupPhotoProcessing
         }
 
         /// <summary>
-        /// Draw Boundary - Actually, just click on the top-left & bottom-right corner
+        /// Draw Boundary - Actually, just click on the top-left then bottom-right corner
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -451,10 +485,25 @@ namespace GroupPhotoProcessing
                         int selHeight = pntBottomRight.X - pntTopLeft.X + 1;
                         int selWidth = pntBottomRight.Y - pntTopLeft.Y + 1;
 
+                        // Get the selected image
                         Image<Bgr, byte> selectedImg = new Image<Bgr, byte>(selWidth, selHeight);
                         for (var r = 0; r < selHeight; ++r)
                             for (var c = 0; c < selWidth; ++c)
                                 selectedImg[r, c] = imgList[currImgIdFusion][r + pntTopLeft.X, c + pntTopLeft.Y];
+
+                        if (imgTypeList[currImgIdFusion] == ImageTypes.Group)
+                        {
+                            tarImg = selectedImg;
+                            tarCenterX = (pntTopLeft.X + pntBottomRight.X) / 2;
+                            tarCenterY = (pntTopLeft.Y + pntBottomRight.Y) / 2;
+                        }
+                        else
+                            srcImg = selectedImg;
+
+                        //selectedImg.Save("test1.bmp");
+                        //Image<Bgr, byte> zoomSelectedImg = selectedImg.Resize(1.6, Emgu.CV.CvEnum.INTER.CV_INTER_LINEAR);
+                        //zoomSelectedImg.Save("test2.bmp");
+
 
                         // Paint the boundary
                         // +----------+
@@ -486,15 +535,13 @@ namespace GroupPhotoProcessing
                             //pointID[pointB.X, j] = -1;
                         }
 
-                        //selectedImg.Save("test1.bmp");
 
-                        //Image<Bgr, byte> zoomSelectedImg = selectedImg.Resize(1.6, Emgu.CV.CvEnum.INTER.CV_INTER_LINEAR);
-                        //zoomSelectedImg.Save("test2.bmp");
                     }
 
                     pictureBoxImgFusion.Image = imgModifiedList[currImgIdFusion].ToBitmap();
                 }
             }
         }
+
     }
 }

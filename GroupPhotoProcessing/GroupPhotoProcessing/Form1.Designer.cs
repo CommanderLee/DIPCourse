@@ -63,6 +63,7 @@
             this.labelStatusFusion = new System.Windows.Forms.Label();
             this.buttonFusionPreparing = new System.Windows.Forms.Button();
             this.tabStiching = new System.Windows.Forms.TabPage();
+            this.buttonShowImg = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPoint.SuspendLayout();
             this.panelImg.SuspendLayout();
@@ -415,6 +416,7 @@
             // 
             this.panelImgMethodsFusion.BackColor = System.Drawing.Color.AliceBlue;
             this.panelImgMethodsFusion.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panelImgMethodsFusion.Controls.Add(this.buttonShowImg);
             this.panelImgMethodsFusion.Controls.Add(this.buttonImageFusion);
             this.panelImgMethodsFusion.Controls.Add(this.buttonClearBoundary);
             this.panelImgMethodsFusion.Controls.Add(this.labelStatusFusion);
@@ -427,7 +429,7 @@
             // buttonImageFusion
             // 
             this.buttonImageFusion.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.buttonImageFusion.Location = new System.Drawing.Point(390, 3);
+            this.buttonImageFusion.Location = new System.Drawing.Point(530, 3);
             this.buttonImageFusion.Name = "buttonImageFusion";
             this.buttonImageFusion.Size = new System.Drawing.Size(130, 40);
             this.buttonImageFusion.TabIndex = 5;
@@ -475,6 +477,17 @@
             this.tabStiching.TabIndex = 2;
             this.tabStiching.Text = "ImageStiching";
             this.tabStiching.UseVisualStyleBackColor = true;
+            // 
+            // buttonShowImg
+            // 
+            this.buttonShowImg.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.buttonShowImg.Location = new System.Drawing.Point(390, 3);
+            this.buttonShowImg.Name = "buttonShowImg";
+            this.buttonShowImg.Size = new System.Drawing.Size(130, 40);
+            this.buttonShowImg.TabIndex = 6;
+            this.buttonShowImg.Text = "Show Image";
+            this.buttonShowImg.UseVisualStyleBackColor = true;
+            this.buttonShowImg.Click += new System.EventHandler(this.buttonShowImg_Click);
             // 
             // Form1
             // 
@@ -541,6 +554,7 @@
         private System.Windows.Forms.Label labelStatusFusion;
         private System.Windows.Forms.Button buttonClearBoundary;
         private System.Windows.Forms.Button buttonImageFusion;
+        private System.Windows.Forms.Button buttonShowImg;
     }
 }
 
