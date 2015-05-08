@@ -46,8 +46,15 @@ namespace GroupPhotoProcessing
 
         List<Point>             clickList;
 
-        Image<Bgr, byte>        srcImg, tarImg;
+        // The images which we are working on
+        Image<Bgr, byte>        srcImg, tarImg, zoomSrcImg;
+
+        // The user's specified center point, and top-left point
         int                     tarCenterX, tarCenterY;
+        int                     tarTopLeftX, tarTopLeftY;
+
+        // Mark the point Id. -1:boundary, [0,..):interior points
+        int[,]                  pointId;
 
         int                     currImgIdFusion;
 
@@ -70,14 +77,7 @@ namespace GroupPhotoProcessing
             buttonImgType.Text = currType.ToString();
 
             // 2nd Tab
-            imgModifiedList = new List<Image<Bgr, byte>>();
-            imgGroupBtnList = new List<Button>();
-            imgSingleBtnList = new List<Button>();
-            clickList = new List<Point>();
-            srcImg = null;
-            tarImg = null;
-
-            currImgIdFusion = -1;
+            initFusionTab();
         }
 
         /*** 1st Tab: Point Processing ***/
@@ -334,6 +334,21 @@ namespace GroupPhotoProcessing
 
         /*** 2nd Tab: Image Fusion ***/
 
+        /// <summary>
+        /// Initialize the UI/Data of Image Fusion Tab(2nd Tab)
+        /// </summary>
+        private void initFusionTab()
+        {
+            imgModifiedList = new List<Image<Bgr, byte>>();
+            imgGroupBtnList = new List<Button>();
+            imgSingleBtnList = new List<Button>();
+            clickList = new List<Point>();
+            srcImg = null;
+            tarImg = null;
+            zoomSrcImg = null;
+            currImgIdFusion = -1;
+        }
+
         private void buttonFusionPreparing_Click(object sender, EventArgs e)
         {
             // Clear
@@ -341,8 +356,10 @@ namespace GroupPhotoProcessing
                 panelGroupImgNames.Controls.Remove(btn);
             foreach (Button btn in imgSingleBtnList)
                 panelSingleImgNames.Controls.Remove(btn);
-            imgGroupBtnList.Clear();
-            imgSingleBtnList.Clear();
+
+            initFusionTab();
+
+            pictureBoxImgFusion.Image = null;
 
             for (var i = 0; i < imgBtnList.Count; ++i)
             {
@@ -363,7 +380,7 @@ namespace GroupPhotoProcessing
                     parentList = imgSingleBtnList;
                 }
 
-                int btnId = parentList.Count;
+                int localBtnId = parentList.Count;
                 // Add a button
                 // Magic numbers: Fixed button location/size in the 'panelGroup(Single)ImgNames'
                 Button tmpBtn = new Button();
@@ -371,7 +388,7 @@ namespace GroupPhotoProcessing
                 tmpBtn.Name = imgBtnList[i].Name;
                 tmpBtn.Click += imgFusionBtns_Click;
                 tmpBtn.Size = new Size(90, 45);
-                tmpBtn.Location = new Point(90 * btnId + 160, 0);
+                tmpBtn.Location = new Point(90 * localBtnId + 160, 0);
 
                 parentPanel.Controls.Add(tmpBtn);
                 parentList.Add(tmpBtn);
@@ -386,13 +403,13 @@ namespace GroupPhotoProcessing
         /// <param name="e"></param>
         private void imgFusionBtns_Click(object sender, EventArgs e)
         {
-            int btnId = Convert.ToInt32(((Button)sender).Name);
-            Console.WriteLine("Click on Button No." + btnId);
-            if (btnId >= 0 && btnId < imgList.Count)
+            int globalBtnId = Convert.ToInt32(((Button)sender).Name);
+            Console.WriteLine("Click on Button No." + globalBtnId);
+            if (globalBtnId >= 0 && globalBtnId < imgList.Count)
             {
-                pictureBoxImgFusion.Image = imgModifiedList[btnId].ToBitmap();
-                currImgIdFusion = btnId;
-                labelStatusFusion.Text = imgBtnList[btnId].Text;
+                pictureBoxImgFusion.Image = imgModifiedList[globalBtnId].ToBitmap();
+                currImgIdFusion = globalBtnId;
+                labelStatusFusion.Text = imgBtnList[globalBtnId].Text;
                 clickList.Clear();
             }
             else
@@ -429,14 +446,15 @@ namespace GroupPhotoProcessing
                 // Zoom the source rectangular to the target rectangular
                 double zoomScale = Math.Min((double)tarImg.Width / srcImg.Width, (double)tarImg.Height / srcImg.Height);
                 Console.WriteLine("Zoom scale:" + zoomScale);
-                Image<Bgr, byte> zoomSrcImg = srcImg.Resize(zoomScale, Emgu.CV.CvEnum.INTER.CV_INTER_LINEAR);
+                zoomSrcImg = srcImg.Resize(zoomScale, Emgu.CV.CvEnum.INTER.CV_INTER_LINEAR);
 
                 // Assume that the user is currently watching the target image page
                 // That is, the currImgIdFusion = target image id
-                int newTopLeftX = tarCenterX - zoomSrcImg.Height / 2, newTopLeftY = tarCenterY - zoomSrcImg.Width / 2;
+                tarTopLeftX = tarCenterX - zoomSrcImg.Height / 2;
+                tarTopLeftY = tarCenterY - zoomSrcImg.Width / 2;
                 for (var r = 0; r < zoomSrcImg.Height; ++r)
                     for (var c = 0; c < zoomSrcImg.Width; ++c)
-                        imgModifiedList[currImgIdFusion][r + newTopLeftX, c + newTopLeftY] = zoomSrcImg[r, c];
+                        imgModifiedList[currImgIdFusion][r + tarTopLeftX, c + tarTopLeftY] = zoomSrcImg[r, c];
 
                 pictureBoxImgFusion.Image = imgModifiedList[currImgIdFusion].ToBitmap();
             }
@@ -450,11 +468,165 @@ namespace GroupPhotoProcessing
         /// <param name="e"></param>
         private void buttonImageFusion_Click(object sender, EventArgs e)
         {
+            if (zoomSrcImg != null && tarImg != null)
+            {
+                DateTime startTime = DateTime.Now;
+                // Set the boundary value of zoomSrcImg
+                pointId = new int [zoomSrcImg.Height, zoomSrcImg.Width];
+                // +----------+
+                // +          +
+                // +----------+
+                for (var r = 0; r < zoomSrcImg.Height; ++r)
+                {
+                    pointId[r, 0] = -1;
+                    pointId[r, zoomSrcImg.Width - 1] = -1;
+                }
+                // -++++++++++-
+                // -          -
+                // -++++++++++-
+                for (var c = 1; c < zoomSrcImg.Width - 1; ++c)
+                {
+                    pointId[0, c] = -1;
+                    pointId[zoomSrcImg.Height - 1, c] = -1;
+                }
+                
+                // Set mapping between point Id and the position
+                List<Point> contentList = new List<Point>();
+                for (var r = 1; r < zoomSrcImg.Height - 1; ++r)
+                    for (var c = 1; c < zoomSrcImg.Width - 1; ++c)
+                    {
+                        pointId[r, c] = contentList.Count;
+                        contentList.Add(new Point(r, c));
+                    }
+                Console.WriteLine("Mark every points with -1, 0, ...Time:" + DateTime.Now.Subtract(startTime).TotalSeconds);
 
+                // Solve AX=B problem using solutions from the paper: Poisson Image Editing.
+                int contentNum = contentList.Count;
+                // To solve AX=B, get matrix A and B first
+                //var matA = LA.Matrix<double>.Build.Sparse(contentNum, contentNum);
+                //var matB = LA.Double.Vector.Build.Dense(contentNum);
+
+                // top, right, bottom, left. In order to use for-loop.
+                int[] dx = new int[] {-1, 0, 1, 0};
+                int[] dy = new int[] { 0, 1, 0, -1 };
+
+                Image<Bgr, byte> resultImg = imgList[currImgIdFusion].Copy();
+                //int[,] contentColor = new int[3, contentNum];
+                // Parallelize color channel B, G, R
+                System.Threading.Tasks.Parallel.For(0, 3, (k) =>
+                //for (var k = 0; k <= 2; ++k)
+                {
+                    Console.WriteLine("Generate Matrix No. " + k);
+
+                    // Set matrix A & B to zero
+                    var matA = LA.Matrix<double>.Build.Sparse(contentNum, contentNum);
+                    var matB = LA.Double.Vector.Build.Dense(contentNum);
+                    //matA.Clear();
+                    //matB.Clear();
+
+                    // Point P's neighbours.
+                    List<Point> Np = new List<Point>();
+
+                    // Generate matrix A & B
+                    for (var id = 0; id < contentNum; ++id)
+                    {
+                        // For each point, use equation No.7 & No.8 in the paper
+                        // Which means one row in the matrix
+
+                        // Matrix A
+                        
+                        Np.Clear();
+                        // Old Point P: position in the zoomSrcImg. New Point P: position in the tarImg
+                        Point oldP = contentList[id];
+                        Point newP = new Point(oldP.X + tarTopLeftX, oldP.Y + tarTopLeftY);
+                        for (var i = 0; i < 4; ++i)
+                        {
+                            // New Point Q: P's neighbour in the WHOLE target image
+                            Point newQ = new Point(newP.X + dx[i], newP.Y + dy[i]);
+                            if (newQ.X >= 0 && newQ.X < resultImg.Height && newQ.Y >= 0 && newQ.Y < resultImg.Width)
+                            {
+                                // Point Q is inside the area Omiga
+                                Np.Add(newQ);
+                            }
+                        }
+                        matA.At(id, id, Np.Count);
+
+                        foreach (Point newQ in Np)
+                        {
+                            // Check Point Id of Old Q
+                            int qID = pointId[newQ.X - tarTopLeftX, newQ.Y - tarTopLeftY];
+                            // Old Q is inside Omiga
+                            if (qID >= 0)
+                            {
+                                matA.At(id, qID, -1);
+                            }
+                        }
+
+                        // Matrix B
+
+                        double Bi = 0;
+                        foreach (Point newQ in Np)
+                        {
+                            // Check Point Id of Old Q
+                            int qID = pointId[newQ.X - tarTopLeftX, newQ.Y - tarTopLeftY];
+                            // Q is on the boundry
+                            if (qID == -1)
+                            {
+                                Bi += resultImg.Data[newQ.X, newQ.Y, k];
+                            }
+
+                            Point oldQ = new Point(newQ.X - tarTopLeftX, newQ.Y - tarTopLeftY);
+                            Bi += zoomSrcImg.Data[oldP.X, oldP.Y, k] - zoomSrcImg.Data[oldQ.X, oldQ.Y, k];
+                        }
+                        matB.At(id, Bi);
+                    }//);
+                    Console.WriteLine("Generate Matrix Done. Time:" + DateTime.Now.Subtract(startTime).TotalSeconds);
+
+                    // Solve the sparse linear equation using BiCgStab (Bi-Conjugate Gradient Stabilized)
+                    var fp = LA.Double.Vector.Build.Dense(contentNum);
+                    BiCgStab solver = new BiCgStab();
+
+                    // Choose stop criterias
+                    // Learn about stop criteria from: wo80, http://mathnetnumerics.codeplex.com/discussions/404689
+                    var stopCriterias = new List<IIterationStopCriterion<double>>()
+                    {
+                        new ResidualStopCriterion<double>(1e-5),
+                        new IterationCountStopCriterion<double>(1000),
+                        new DivergenceStopCriterion<double>(),
+                        new FailureStopCriterion<double>()
+                    };
+
+                    solver.Solve(matA, matB, fp, new Iterator<double>(stopCriterias), new DiagonalPreconditioner());
+                    Console.WriteLine("Equation Solved. Time:" + DateTime.Now.Subtract(startTime).TotalSeconds);
+                    // Console.WriteLine(fp);
+
+                    // Set the color
+                    for (var id = 0; id < contentNum; ++id)
+                    {
+                        int color = (int)fp.At(id);
+                        if (color < 0)
+                            color = 0;
+                        if (color > 255)
+                            color = 255;
+                        //contentColor[k, id] = color;
+                        resultImg.Data[contentList[id].X + tarTopLeftX, contentList[id].Y + tarTopLeftY, k] = (Byte)color;
+                    }
+                });
+
+                //Paint
+                //for (var id = 0; id < contentNum; ++id)
+                //{
+                //    resultImg[contentList[id].X + tarTopLeftX, contentList[id].Y + tarTopLeftY] = new Bgr(
+                //        contentColor[0, id], contentColor[1, id], contentColor[2, id]);
+                //}
+                imgModifiedList[currImgIdFusion] = resultImg.Copy();
+                pictureBoxImgFusion.Image = resultImg.ToBitmap();
+                Console.WriteLine("Painting Finished. Time:" + DateTime.Now.Subtract(startTime).TotalSeconds);
+            }
         }
 
         /// <summary>
-        /// Draw Boundary - Actually, just click on the top-left then bottom-right corner
+        /// Draw Boundary - Click on the two corners, for example, top-left then bottom-right corner.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -480,8 +652,12 @@ namespace GroupPhotoProcessing
                     // Mark the Boundary
                     if (clickList.Count == 2)
                     {
-                        Point pntTopLeft = clickList[0];
-                        Point pntBottomRight = clickList[1];
+                        // Get Top-Left and Bottom-Right corner even if the user clicks on other corners
+                        Point pntTopLeft = new Point(Math.Min(clickList[0].X, clickList[1].X), 
+                            Math.Min(clickList[0].Y, clickList[1].Y));
+                        Point pntBottomRight = new Point(Math.Max(clickList[0].X, clickList[1].X),
+                            Math.Max(clickList[0].Y, clickList[1].Y));
+
                         int selHeight = pntBottomRight.X - pntTopLeft.X + 1;
                         int selWidth = pntBottomRight.Y - pntTopLeft.Y + 1;
 
@@ -499,11 +675,6 @@ namespace GroupPhotoProcessing
                         }
                         else
                             srcImg = selectedImg;
-
-                        //selectedImg.Save("test1.bmp");
-                        //Image<Bgr, byte> zoomSelectedImg = selectedImg.Resize(1.6, Emgu.CV.CvEnum.INTER.CV_INTER_LINEAR);
-                        //zoomSelectedImg.Save("test2.bmp");
-
 
                         // Paint the boundary
                         // +----------+
