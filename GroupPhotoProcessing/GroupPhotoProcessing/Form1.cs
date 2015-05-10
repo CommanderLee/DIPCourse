@@ -58,6 +58,12 @@ namespace GroupPhotoProcessing
 
         int                     currImgIdFusion;
 
+        // 3rd Tab
+        List<Image<Bgr, byte>>  imgStitchList;
+        List<Button>            imgStitchBtnList;
+
+        int                     currImgIdStitch;
+
         public Form1()
         {
             InitializeComponent();
@@ -78,6 +84,9 @@ namespace GroupPhotoProcessing
 
             // 2nd Tab
             initFusionTab();
+
+            // 3rd Tab
+            initStitchTab();
         }
 
         /*** 1st Tab: Point Processing ***/
@@ -711,6 +720,75 @@ namespace GroupPhotoProcessing
 
                     pictureBoxImgFusion.Image = imgModifiedList[currImgIdFusion].ToBitmap();
                 }
+            }
+        }
+
+        /*** Auto-Stitching ***/
+
+        /// <summary>
+        /// Initialize the UI/Data of Image Stitch Tab(3rd Tab)
+        /// </summary>
+        private void initStitchTab()
+        {
+            if (imgModifiedList.Count > 0)
+                imgStitchList = imgModifiedList;
+            else
+                imgStitchList = imgList;
+
+            imgStitchBtnList = new List<Button>();
+        }
+
+        private void buttonStitchPreparing_Click(object sender, EventArgs e)
+        {
+            // Clear
+            foreach (Button btn in imgStitchBtnList)
+                panelStitchImgNames.Controls.Remove(btn);
+
+            initStitchTab();
+
+            pictureBoxImgStitch.Image = null;
+
+            for (var i = 0; i < imgBtnList.Count; ++i)
+            {
+                if (imgTypeList[i] == ImageTypes.Group)
+                {
+                    // Copy image
+                    imgModifiedList.Add(imgList[i].Copy());
+
+                    int localBtnId = imgStitchBtnList.Count;
+                    // Add a button
+                    // Magic numbers: Fixed button location/size in the 'panelStitchImgNames'
+                    Button tmpBtn = new Button();
+                    tmpBtn.Text = imgBtnList[i].Text;
+                    tmpBtn.Name = imgBtnList[i].Name;
+                    tmpBtn.Click += imgStitchBtns_Click;
+                    tmpBtn.Size = new Size(90, 45);
+                    tmpBtn.Location = new Point(90 * localBtnId + 160, 0);
+
+                    panelStitchImgNames.Controls.Add(tmpBtn);
+                    imgStitchBtnList.Add(tmpBtn);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Select an image by clicking corresponding button on the 3rd Tab (Image Stitch)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void imgStitchBtns_Click(object sender, EventArgs e)
+        {
+            int globalBtnId = Convert.ToInt32(((Button)sender).Name);
+            Console.WriteLine("Click on Button No." + globalBtnId);
+            if (globalBtnId >= 0 && globalBtnId < imgModifiedList.Count)
+            {
+                pictureBoxImgStitch.Image = imgModifiedList[globalBtnId].ToBitmap();
+                currImgIdStitch = globalBtnId;
+                labelStatusStitch.Text = imgBtnList[globalBtnId].Text;
+            }
+            else
+            {
+                Console.WriteLine("Error: Image Button Index out of range.");
             }
         }
 
