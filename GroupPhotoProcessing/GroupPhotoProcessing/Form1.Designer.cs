@@ -603,7 +603,7 @@
             // buttonImageMatch
             // 
             this.buttonImageMatch.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.buttonImageMatch.Location = new System.Drawing.Point(218, 2);
+            this.buttonImageMatch.Location = new System.Drawing.Point(188, 2);
             this.buttonImageMatch.Margin = new System.Windows.Forms.Padding(2);
             this.buttonImageMatch.Name = "buttonImageMatch";
             this.buttonImageMatch.Size = new System.Drawing.Size(98, 32);
@@ -615,7 +615,7 @@
             // buttonImageStitch
             // 
             this.buttonImageStitch.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.buttonImageStitch.Location = new System.Drawing.Point(321, 2);
+            this.buttonImageStitch.Location = new System.Drawing.Point(292, 2);
             this.buttonImageStitch.Margin = new System.Windows.Forms.Padding(2);
             this.buttonImageStitch.Name = "buttonImageStitch";
             this.buttonImageStitch.Size = new System.Drawing.Size(98, 32);
@@ -652,7 +652,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(1532, 837);
+            this.ClientSize = new System.Drawing.Size(1784, 837);
             this.Controls.Add(this.tabControl1);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";

@@ -1001,9 +1001,15 @@ namespace GroupPhotoProcessing
         private void buttonImageStitch_Click(object sender, EventArgs e)
         {
             Point topLeft, topRight, bottomLeft, bottomRight;
+            
             var dstId = 0;
+            Image<Bgr, byte> currResultImg = imgStitchList[dstId];
+            
             Matrix<double> homograph = new Matrix<double>(3, 3);
             homograph[0, 0] = homograph[1, 1] = homograph[2, 2] = 1;
+
+            //Image<Bgr, byte> imgResult;
+
             for (var srcId = 1; srcId < imgStitchList.Count; ++srcId)
             {
                 homograph = homograph.Mul(hMatList[srcId - 1]);
@@ -1014,13 +1020,51 @@ namespace GroupPhotoProcessing
                 Console.WriteLine(String.Format("{0}, {1}\n{2}, {3}\n{4}, {5}\n{6}, {7}\n", 
                     topLeft.X, topLeft.Y, topRight.X, topRight.Y, bottomLeft.X, bottomLeft.Y, bottomRight.X, bottomRight.Y));
 
-                Image<Bgr, byte> imgResult = new Image<Bgr, byte>(Math.Max(topRight.X, bottomRight.X),
-                    Math.Max(bottomLeft.Y, bottomRight.Y));
-                imgResult = imgStitchList[srcId].WarpPerspective(homograph, imgResult.Width, imgResult.Height, Emgu.CV.CvEnum.INTER.CV_INTER_LINEAR, 
-                    Emgu.CV.CvEnum.WARP.CV_WARP_FILL_OUTLIERS, new Bgr(Color.Black));
-                pictureBoxImgStitch.Image = imgResult.ToBitmap();
+                // Find biggest size for the new img
+                Image<Bgr, byte> newImg;
+                newImg = imgStitchList[srcId].WarpPerspective(homograph, Math.Max(topRight.X, bottomRight.X),
+                    Math.Max(currResultImg.Height, Math.Max(bottomLeft.Y, bottomRight.Y)), Emgu.CV.CvEnum.INTER.CV_INTER_LINEAR, 
+                    Emgu.CV.CvEnum.WARP.CV_WARP_FILL_OUTLIERS, new Bgr(0, 0, 0));
 
+                System.Threading.Tasks.Parallel.For(0, newImg.Height, (r) =>
+                //for (var r = 0; r < newImg.Height; ++r)
+                {
+                    // Weight of left image(dstImg)
+                    double alpha;
+                    int start = -1, end = currResultImg.Width - 1;
+                    int pixel;
+                    for (var c = 0; c < newImg.Width; ++c)
+                    {
+                        if (r < currResultImg.Height && c < currResultImg.Width)
+                        {
+                            // Mixed area
+                            if (newImg.Data[r, c, 0] != 0 || newImg.Data[r, c, 1] != 0 || newImg.Data[r, c, 2] != 0)
+                            {
+                                // Start of the mixed area
+                                if (start < 0)
+                                    start = c;
+                                alpha = 1 - (c - start) / (double)(end - start);
+                                for (var k = 0; k < 3; ++k)
+                                {
+                                    pixel = (int)(currResultImg.Data[r, c, k] * alpha + newImg.Data[r, c, k] * (1 - alpha));
+                                    if (pixel < 0)
+                                        pixel = 0;
+                                    else if (pixel > 255)
+                                        pixel = 255;
+                                    newImg.Data[r, c, k] = (byte)pixel;
+                                }
+                            }
+                            else
+                            {
+                                newImg[r, c] = currResultImg[r, c];
+                            }
+                        }
+                    }
+                });
+                currResultImg = newImg.Copy();
             }
+
+            pictureBoxImgStitch.Image = currResultImg.ToBitmap();
         }
 
     }
