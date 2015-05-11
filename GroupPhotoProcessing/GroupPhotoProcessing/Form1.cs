@@ -62,6 +62,8 @@ namespace GroupPhotoProcessing
         // 3rd Tab: Image Stitching
         List<Image<Bgr, byte>>  imgStitchList;
         List<Button>            imgStitchBtnList;
+        Image<Bgr, byte>        rawTotalImg;
+        List<Point>             imgTopLeftPos;
 
         int                     currImgIdStitch;
 
@@ -751,6 +753,7 @@ namespace GroupPhotoProcessing
             imgStitchBtnList = new List<Button>();
             imgStitchList = new List<Image<Bgr, byte>>();
             hMatList = new List<HomographyMatrix>();
+            imgTopLeftPos = new List<Point>();
 
             // Painting
             matchGraph = pictureBoxImgStitch.CreateGraphics();
@@ -776,6 +779,7 @@ namespace GroupPhotoProcessing
                     imgStitchList.Add(imgModifiedList[i].Copy());
                     if (imgModifiedList[i].Height > maxHeight)
                         maxHeight = imgModifiedList[i].Height;
+                    imgTopLeftPos.Add(new Point(sumWidth, 0));
                     sumWidth += imgModifiedList[i].Width;
 
                     int localBtnId = imgStitchBtnList.Count;
@@ -783,7 +787,7 @@ namespace GroupPhotoProcessing
                     // Magic numbers: Fixed button location/size in the 'panelStitchImgNames'
                     Button tmpBtn = new Button();
                     tmpBtn.Text = imgBtnList[i].Text;
-                    tmpBtn.Name = imgBtnList[i].Name;
+                    tmpBtn.Name = localBtnId.ToString();
                     tmpBtn.Click += imgStitchBtns_Click;
                     tmpBtn.Size = new Size(90, 45);
                     tmpBtn.Location = new Point(90 * localBtnId + 160, 0);
@@ -794,16 +798,16 @@ namespace GroupPhotoProcessing
             }
 
             // Paint horizontally
-            Image<Bgr, byte> totalImage = new Image<Bgr, byte>(sumWidth, maxHeight);
+            rawTotalImg = new Image<Bgr, byte>(sumWidth, maxHeight);
             sumWidth = 0;
             foreach (Image<Bgr, byte> currImg in imgStitchList)
             {
                 for (var r = 0; r < currImg.Height; ++r)
                     for (var c = 0; c < currImg.Width; ++c)
-                        totalImage[r, sumWidth + c] = currImg[r, c];
+                        rawTotalImg[r, sumWidth + c] = currImg[r, c];
                 sumWidth += currImg.Width;
             }
-            pictureBoxImgStitch.Image = totalImage.ToBitmap();
+            pictureBoxImgStitch.Image = rawTotalImg.ToBitmap();
         }
 
         /// <summary>
@@ -813,13 +817,13 @@ namespace GroupPhotoProcessing
         /// <param name="e"></param>
         private void imgStitchBtns_Click(object sender, EventArgs e)
         {
-            int globalBtnId = Convert.ToInt32(((Button)sender).Name);
-            Console.WriteLine("Click on Button No." + globalBtnId);
-            if (globalBtnId >= 0 && globalBtnId < imgModifiedList.Count)
+            int localBtnId = Convert.ToInt32(((Button)sender).Name);
+            Console.WriteLine("Click on Button No." + localBtnId);
+            if (localBtnId >= 0 && localBtnId < imgStitchList.Count)
             {
-                pictureBoxImgStitch.Image = imgModifiedList[globalBtnId].ToBitmap();
-                currImgIdStitch = globalBtnId;
-                labelStatusStitch.Text = imgBtnList[globalBtnId].Text;
+                pictureBoxImgStitch.Image = rawTotalImg.ToBitmap();
+                currImgIdStitch = localBtnId;
+                labelStatusStitch.Text = imgStitchBtnList[localBtnId].Text;
             }
             else
             {
@@ -858,28 +862,28 @@ namespace GroupPhotoProcessing
                     Console.WriteLine(String.Format("Img No.{0}, Features: {1}", i, features[i].Length));
                 }
 
-                // Get matching pictures <srcId, dstId>, then generate an order
+                // Get matching pictures <dstId, srcId>, then generate an order
                 // We assume that the images are in horizontal order
                 hMatList.Clear();
                 int sumWidth = 0;
-                for (var srcId = 0; srcId + 1 < imgStitchList.Count; ++srcId)
+                for (var dstId = 0; dstId + 1 < imgStitchList.Count; ++dstId)
                 {
-                    int dstId = srcId + 1;
+                    int srcId = dstId + 1;
 
-                    ImageFeature<float>[] srcFeat = features[srcId];
                     ImageFeature<float>[] dstFeat = features[dstId];
+                    ImageFeature<float>[] srcFeat = features[srcId];
 
                     int matchCount = 0;
-                    List<PointF> srcPntList = new List<PointF>();
                     List<PointF> dstPntList = new List<PointF>();
+                    List<PointF> srcPntList = new List<PointF>();
 
-                    for (var i = 0; i < srcFeat.Length; ++i)
+                    for (var i = 0; i < dstFeat.Length; ++i)
                     {
                         // Calculate distance: Brute Force
-                        double[] dist = new double[dstFeat.Length];
-                        for (var j = 0; j < dstFeat.Length; ++j)
+                        double[] dist = new double[srcFeat.Length];
+                        for (var j = 0; j < srcFeat.Length; ++j)
                         {
-                            dist[j] = getEuclidDistance(srcFeat[i].Descriptor, dstFeat[j].Descriptor);
+                            dist[j] = getEuclidDistance(dstFeat[i].Descriptor, srcFeat[j].Descriptor);
                         }
 
                         // Get 2-min distance points
@@ -897,7 +901,7 @@ namespace GroupPhotoProcessing
                             minDist = dist[1];
                             minDist2 = dist[0];
                         }
-                        for (var j = 2; j < dstFeat.Length; ++j)
+                        for (var j = 2; j < srcFeat.Length; ++j)
                         {
                             if (dist[j] < minDist)
                             {
@@ -914,19 +918,16 @@ namespace GroupPhotoProcessing
                         // If the distance is small enough. 
                         if (minDist / minDist2 < SIFT_FEAT_DIST_THRESHOLD)
                         {
-                            PointF pi = srcFeat[i].KeyPoint.Point;
-                            PointF pj = dstFeat[minIndex].KeyPoint.Point;
-                            pi.X += sumWidth;
-                            pj.X += sumWidth + imgStitchList[srcId].Width;
-                            matchGraph.DrawLine(matchPen, pi, pj);
+                            PointF pi = dstFeat[i].KeyPoint.Point;
+                            PointF pj = srcFeat[minIndex].KeyPoint.Point;
+                            matchGraph.DrawLine(matchPen, new PointF(pi.X + sumWidth, pi.Y), new PointF(pj.X + sumWidth + imgStitchList[dstId].Width, pj.Y));
                             //rawMatchPairs.Add(new Tuple<int, int>(i, minIndex));
-                            srcPntList.Add(pi);
-                            dstPntList.Add(pj);
+                            dstPntList.Add(pi);
+                            srcPntList.Add(pj);
                             ++matchCount;
                         }
                     }
-                    Console.WriteLine(String.Format("[{0}] <-> [{1}], {2} matching pairs.", srcId, dstId, matchCount));
-                    sumWidth += imgStitchList[srcId].Width;
+                    Console.WriteLine(String.Format("Dst:[{0}] <-> Src:[{1}], {2} matching pairs.", dstId, srcId, matchCount));
 
                     if (matchCount >= RANSAC_INIT_SET_SIZE)
                     {
@@ -945,7 +946,7 @@ namespace GroupPhotoProcessing
                             hMatList.Add(hMat);
 
                             // Show inliers
-                            for (var i = 0; i < srcPntList.Count; ++i)
+                            for (var j = 0; j < srcPntList.Count; ++j)
                             {
                                 // Calculate distance
                                 Matrix<double> srcPntMat, dstProjMat;
@@ -953,27 +954,43 @@ namespace GroupPhotoProcessing
                                 double dist;
                                 
                                 srcPntMat = new Matrix<double>(3, 1);
-                                srcPntMat[0, 0] = srcPntList[i].X;
-                                srcPntMat[1, 0] = srcPntList[i].Y;
+                                srcPntMat[0, 0] = srcPntList[j].X;
+                                srcPntMat[1, 0] = srcPntList[j].Y;
                                 srcPntMat[2, 0] = 1;
                                 
                                 dstProjMat = hMat.Mul(srcPntMat);
                                 dstProjX = dstProjMat[0, 0] / dstProjMat[2, 0];
                                 dstProjY = dstProjMat[1, 0] / dstProjMat[2, 0];
 
-                                dist = Math.Sqrt(Math.Pow(dstProjX - dstPntList[i].X, 2) + Math.Pow(dstProjY - dstPntList[i].Y, 2));
+                                dist = Math.Sqrt(Math.Pow(dstProjX - dstPntList[j].X, 2) + Math.Pow(dstProjY - dstPntList[j].Y, 2));
                                 if (dist <= RANSAC_REPROJ_THRESHOLD)
                                 {
-                                    matchGraph.DrawLine(inlierPen, new Point((int)srcPntList[i].X, (int)srcPntList[i].Y),
-                                        new Point((int)dstPntList[i].X, (int)dstPntList[i].Y));
+                                    Console.WriteLine(String.Format("Valid point pair({0},{1}) <-> ({2},{3})", srcPntMat[0, 0], srcPntMat[1, 0], dstProjX, dstProjY));
+                                    matchGraph.DrawLine(inlierPen, new Point((int)dstProjX + sumWidth, (int)dstProjY),
+                                        new Point((int)srcPntList[j].X + sumWidth + imgStitchList[dstId].Width, (int)srcPntList[j].Y));
                                 }
-                                Console.WriteLine("No." + i + " distance: " + dist);
+                                Console.WriteLine("No." + j + " distance: " + dist);
                             }
                         }
                     }
+                    sumWidth += imgStitchList[dstId].Width;
+
                 }
 
             }
+        }
+
+        private Point projectPoint(Point srcPnt, Matrix<double> hMat)
+        {
+            Matrix<double> srcPntMat = new Matrix<double>(3, 1);
+            srcPntMat[0, 0] = srcPnt.X;
+            srcPntMat[1, 0] = srcPnt.Y;
+            srcPntMat[2, 0] = 1;
+            Matrix<double> dstProjMat = hMat.Mul(srcPntMat);
+            int dstProjX = (int)(dstProjMat[0, 0] / dstProjMat[2, 0]);
+            int dstProjY = (int)(dstProjMat[1, 0] / dstProjMat[2, 0]);
+            Point dstPnt = new Point(dstProjX, dstProjY);
+            return dstPnt;
         }
 
         /// <summary>
@@ -983,9 +1000,28 @@ namespace GroupPhotoProcessing
         /// <param name="e"></param>
         private void buttonImageStitch_Click(object sender, EventArgs e)
         {
+            Point topLeft, topRight, bottomLeft, bottomRight;
+            var dstId = 0;
+            Matrix<double> homograph = new Matrix<double>(3, 3);
+            homograph[0, 0] = homograph[1, 1] = homograph[2, 2] = 1;
+            for (var srcId = 1; srcId < imgStitchList.Count; ++srcId)
+            {
+                homograph = homograph.Mul(hMatList[srcId - 1]);
+                topLeft = projectPoint(new Point(0, 0), homograph);
+                topRight = projectPoint(new Point(imgStitchList[srcId].Width - 1, 0), homograph);
+                bottomLeft = projectPoint(new Point(0, imgStitchList[srcId].Height - 1), homograph);
+                bottomRight = projectPoint(new Point(imgStitchList[srcId].Width - 1, imgStitchList[srcId].Height - 1), homograph);
+                Console.WriteLine(String.Format("{0}, {1}\n{2}, {3}\n{4}, {5}\n{6}, {7}\n", 
+                    topLeft.X, topLeft.Y, topRight.X, topRight.Y, bottomLeft.X, bottomLeft.Y, bottomRight.X, bottomRight.Y));
 
+                Image<Bgr, byte> imgResult = new Image<Bgr, byte>(Math.Max(topRight.X, bottomRight.X),
+                    Math.Max(bottomLeft.Y, bottomRight.Y));
+                imgResult = imgStitchList[srcId].WarpPerspective(homograph, imgResult.Width, imgResult.Height, Emgu.CV.CvEnum.INTER.CV_INTER_LINEAR, 
+                    Emgu.CV.CvEnum.WARP.CV_WARP_FILL_OUTLIERS, new Bgr(Color.Black));
+                pictureBoxImgStitch.Image = imgResult.ToBitmap();
+
+            }
         }
-
 
     }
 }
