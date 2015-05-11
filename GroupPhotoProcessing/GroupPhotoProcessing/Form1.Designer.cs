@@ -100,7 +100,7 @@
             this.tabControl1.Margin = new System.Windows.Forms.Padding(2);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1500, 810);
+            this.tabControl1.Size = new System.Drawing.Size(1800, 810);
             this.tabControl1.TabIndex = 0;
             // 
             // tabPoint
@@ -112,7 +112,7 @@
             this.tabPoint.Margin = new System.Windows.Forms.Padding(2);
             this.tabPoint.Name = "tabPoint";
             this.tabPoint.Padding = new System.Windows.Forms.Padding(2);
-            this.tabPoint.Size = new System.Drawing.Size(1492, 784);
+            this.tabPoint.Size = new System.Drawing.Size(1792, 784);
             this.tabPoint.TabIndex = 0;
             this.tabPoint.Text = "PointProcessing";
             this.tabPoint.UseVisualStyleBackColor = true;
@@ -125,7 +125,7 @@
             this.panelImg.Location = new System.Drawing.Point(8, 106);
             this.panelImg.Margin = new System.Windows.Forms.Padding(2);
             this.panelImg.Name = "panelImg";
-            this.panelImg.Size = new System.Drawing.Size(1475, 665);
+            this.panelImg.Size = new System.Drawing.Size(1775, 665);
             this.panelImg.TabIndex = 2;
             // 
             // pictureBoxImg
@@ -133,7 +133,7 @@
             this.pictureBoxImg.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxImg.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBoxImg.Name = "pictureBoxImg";
-            this.pictureBoxImg.Size = new System.Drawing.Size(1460, 650);
+            this.pictureBoxImg.Size = new System.Drawing.Size(1760, 650);
             this.pictureBoxImg.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBoxImg.TabIndex = 0;
             this.pictureBoxImg.TabStop = false;
@@ -145,7 +145,7 @@
             this.panelImgNames.Location = new System.Drawing.Point(8, 57);
             this.panelImgNames.Margin = new System.Windows.Forms.Padding(2);
             this.panelImgNames.Name = "panelImgNames";
-            this.panelImgNames.Size = new System.Drawing.Size(1475, 41);
+            this.panelImgNames.Size = new System.Drawing.Size(1775, 41);
             this.panelImgNames.TabIndex = 1;
             // 
             // panelImgMethods
@@ -170,7 +170,7 @@
             this.panelImgMethods.Location = new System.Drawing.Point(8, 8);
             this.panelImgMethods.Margin = new System.Windows.Forms.Padding(2);
             this.panelImgMethods.Name = "panelImgMethods";
-            this.panelImgMethods.Size = new System.Drawing.Size(1475, 41);
+            this.panelImgMethods.Size = new System.Drawing.Size(1775, 41);
             this.panelImgMethods.TabIndex = 0;
             // 
             // buttonImgType
@@ -382,7 +382,7 @@
             this.tabFusion.Margin = new System.Windows.Forms.Padding(2);
             this.tabFusion.Name = "tabFusion";
             this.tabFusion.Padding = new System.Windows.Forms.Padding(2);
-            this.tabFusion.Size = new System.Drawing.Size(1492, 784);
+            this.tabFusion.Size = new System.Drawing.Size(1792, 784);
             this.tabFusion.TabIndex = 1;
             this.tabFusion.Text = "ImageFusion";
             this.tabFusion.UseVisualStyleBackColor = true;
@@ -396,7 +396,7 @@
             this.panelImgFusion.Location = new System.Drawing.Point(8, 106);
             this.panelImgFusion.Margin = new System.Windows.Forms.Padding(2);
             this.panelImgFusion.Name = "panelImgFusion";
-            this.panelImgFusion.Size = new System.Drawing.Size(1475, 665);
+            this.panelImgFusion.Size = new System.Drawing.Size(1775, 665);
             this.panelImgFusion.TabIndex = 4;
             // 
             // pictureBoxImgFusion
@@ -404,7 +404,7 @@
             this.pictureBoxImgFusion.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxImgFusion.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBoxImgFusion.Name = "pictureBoxImgFusion";
-            this.pictureBoxImgFusion.Size = new System.Drawing.Size(1460, 650);
+            this.pictureBoxImgFusion.Size = new System.Drawing.Size(1760, 650);
             this.pictureBoxImgFusion.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.pictureBoxImgFusion.TabIndex = 0;
             this.pictureBoxImgFusion.TabStop = false;
@@ -416,10 +416,10 @@
             this.panelSingleImgNames.BackColor = System.Drawing.Color.LightSteelBlue;
             this.panelSingleImgNames.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.panelSingleImgNames.Controls.Add(this.labelSingle);
-            this.panelSingleImgNames.Location = new System.Drawing.Point(745, 57);
+            this.panelSingleImgNames.Location = new System.Drawing.Point(895, 57);
             this.panelSingleImgNames.Margin = new System.Windows.Forms.Padding(2);
             this.panelSingleImgNames.Name = "panelSingleImgNames";
-            this.panelSingleImgNames.Size = new System.Drawing.Size(735, 41);
+            this.panelSingleImgNames.Size = new System.Drawing.Size(885, 41);
             this.panelSingleImgNames.TabIndex = 3;
             // 
             // labelSingle
@@ -441,7 +441,7 @@
             this.panelGroupImgNames.Location = new System.Drawing.Point(8, 57);
             this.panelGroupImgNames.Margin = new System.Windows.Forms.Padding(2);
             this.panelGroupImgNames.Name = "panelGroupImgNames";
-            this.panelGroupImgNames.Size = new System.Drawing.Size(730, 41);
+            this.panelGroupImgNames.Size = new System.Drawing.Size(880, 41);
             this.panelGroupImgNames.TabIndex = 2;
             // 
             // labelGroup
@@ -467,7 +467,7 @@
             this.panelImgMethodsFusion.Location = new System.Drawing.Point(8, 8);
             this.panelImgMethodsFusion.Margin = new System.Windows.Forms.Padding(2);
             this.panelImgMethodsFusion.Name = "panelImgMethodsFusion";
-            this.panelImgMethodsFusion.Size = new System.Drawing.Size(1475, 41);
+            this.panelImgMethodsFusion.Size = new System.Drawing.Size(1775, 41);
             this.panelImgMethodsFusion.TabIndex = 1;
             // 
             // buttonShowImg
@@ -537,7 +537,7 @@
             this.tabStitch.Location = new System.Drawing.Point(4, 22);
             this.tabStitch.Margin = new System.Windows.Forms.Padding(2);
             this.tabStitch.Name = "tabStitch";
-            this.tabStitch.Size = new System.Drawing.Size(1492, 784);
+            this.tabStitch.Size = new System.Drawing.Size(1792, 784);
             this.tabStitch.TabIndex = 2;
             this.tabStitch.Text = "ImageStitch";
             this.tabStitch.UseVisualStyleBackColor = true;
@@ -551,7 +551,7 @@
             this.panelImgStitch.Location = new System.Drawing.Point(8, 106);
             this.panelImgStitch.Margin = new System.Windows.Forms.Padding(2);
             this.panelImgStitch.Name = "panelImgStitch";
-            this.panelImgStitch.Size = new System.Drawing.Size(1475, 660);
+            this.panelImgStitch.Size = new System.Drawing.Size(1775, 660);
             this.panelImgStitch.TabIndex = 5;
             // 
             // pictureBoxImgStitch
@@ -559,7 +559,7 @@
             this.pictureBoxImgStitch.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxImgStitch.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBoxImgStitch.Name = "pictureBoxImgStitch";
-            this.pictureBoxImgStitch.Size = new System.Drawing.Size(1460, 650);
+            this.pictureBoxImgStitch.Size = new System.Drawing.Size(1760, 650);
             this.pictureBoxImgStitch.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.pictureBoxImgStitch.TabIndex = 0;
             this.pictureBoxImgStitch.TabStop = false;
@@ -572,7 +572,7 @@
             this.panelStitchImgNames.Location = new System.Drawing.Point(8, 57);
             this.panelStitchImgNames.Margin = new System.Windows.Forms.Padding(2);
             this.panelStitchImgNames.Name = "panelStitchImgNames";
-            this.panelStitchImgNames.Size = new System.Drawing.Size(1475, 41);
+            this.panelStitchImgNames.Size = new System.Drawing.Size(1775, 41);
             this.panelStitchImgNames.TabIndex = 3;
             // 
             // labelStitch
@@ -597,7 +597,7 @@
             this.panelImgMethodsStitch.Location = new System.Drawing.Point(8, 8);
             this.panelImgMethodsStitch.Margin = new System.Windows.Forms.Padding(2);
             this.panelImgMethodsStitch.Name = "panelImgMethodsStitch";
-            this.panelImgMethodsStitch.Size = new System.Drawing.Size(1475, 41);
+            this.panelImgMethodsStitch.Size = new System.Drawing.Size(1775, 41);
             this.panelImgMethodsStitch.TabIndex = 2;
             // 
             // buttonImageMatch
@@ -651,6 +651,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(1532, 837);
             this.Controls.Add(this.tabControl1);
             this.Margin = new System.Windows.Forms.Padding(2);

@@ -65,8 +65,17 @@ namespace GroupPhotoProcessing
 
         int                     currImgIdStitch;
 
-        // Constants used in the RANSAC algorithm
-        const int               RANSAC_REPROJ_THRESHOLD = 4;
+        // Constants used in the Auto-Stitching algorithm
+        const double            SIFT_FEAT_DIST_THRESHOLD = 0.49;
+        const int               RANSAC_INIT_SET_SIZE = 4;
+        const int               RANSAC_REPROJ_THRESHOLD = 3;
+
+        // Homography matrix
+        List<HomographyMatrix>  hMatList;
+
+        // Painting
+        Graphics                matchGraph;
+        Pen                     matchPen, inlierPen;
 
         public Form1()
         {
@@ -741,6 +750,12 @@ namespace GroupPhotoProcessing
 
             imgStitchBtnList = new List<Button>();
             imgStitchList = new List<Image<Bgr, byte>>();
+            hMatList = new List<HomographyMatrix>();
+
+            // Painting
+            matchGraph = pictureBoxImgStitch.CreateGraphics();
+            matchPen = new Pen(Color.Red, 1);
+            inlierPen = new Pen(Color.Blue, 2);
         }
 
         private void buttonStitchPreparing_Click(object sender, EventArgs e)
@@ -832,112 +847,132 @@ namespace GroupPhotoProcessing
         {
             if (imgStitchList.Count >= 2)
             {
-                // Get SIFT from img1 and img2
-                int id1 = 0, id2 = 1;
+                // Calculate SIFT features
+                // Get SIFT from srcImg and dstImg
                 SIFTDetector sift = new SIFTDetector();
-                Image<Gray, byte> img1 = new Image<Gray, byte>(imgStitchList[id1].ToBitmap());
-                Image<Gray, byte> img2 = new Image<Gray, byte>(imgStitchList[id2].ToBitmap());
-                var f1 = sift.DetectFeatures(img1, null);
-                var f2 = sift.DetectFeatures(img2, null);
-                Console.WriteLine("features:" + f1.Length + ", " + f2.Length);
-
-                // Matching features
-                Graphics matchGraph = pictureBoxImgStitch.CreateGraphics();
-                Pen matchPen = new Pen(Color.Red, 1);
-                Pen inlierPen = new Pen(Color.Blue, 2);
-                int matchCount = 0;
-                //List<Tuple<int, int>> rawMatchPairs = new List<Tuple<int, int>>();
-                List<PointF> srcPntList = new List<PointF>();
-                List<PointF> dstPntList = new List<PointF>();
-                for (var i = 0; i < f1.Length; ++i)
+                List<ImageFeature<float>[]> features = new List<ImageFeature<float>[]>();
+                for (var i = 0; i < imgStitchList.Count; ++i)
                 {
-                    // Calculate distance: Brute Force
-                    double[] dist = new double[f2.Length];
-                    for (var j = 0; j < f2.Length; ++j)
-                    {
-                        dist[j] = getEuclidDistance(f1[i].Descriptor, f2[j].Descriptor);
-                    }
+                    Image<Gray, byte> grayImg = new Image<Gray, byte>(imgStitchList[i].ToBitmap());
+                    features.Add(sift.DetectFeatures(grayImg, null));
+                    Console.WriteLine(String.Format("Img No.{0}, Features: {1}", i, features[i].Length));
+                }
 
-                    // Get 2-min distance points
-                    int minIndex;
-                    double minDist, minDist2;
-                    if (dist[0] < dist[1])
+                // Get matching pictures <srcId, dstId>, then generate an order
+                // We assume that the images are in horizontal order
+                hMatList.Clear();
+                int sumWidth = 0;
+                for (var srcId = 0; srcId + 1 < imgStitchList.Count; ++srcId)
+                {
+                    int dstId = srcId + 1;
+
+                    ImageFeature<float>[] srcFeat = features[srcId];
+                    ImageFeature<float>[] dstFeat = features[dstId];
+
+                    int matchCount = 0;
+                    List<PointF> srcPntList = new List<PointF>();
+                    List<PointF> dstPntList = new List<PointF>();
+
+                    for (var i = 0; i < srcFeat.Length; ++i)
                     {
-                        minIndex = 0;
-                        minDist = dist[0];
-                        minDist2 = dist[1];
-                    }
-                    else
-                    {
-                        minIndex = 1;
-                        minDist = dist[1];
-                        minDist2 = dist[0];
-                    }
-                    for (var j = 2; j < f2.Length; ++j)
-                    {
-                        if (dist[j] < minDist)
+                        // Calculate distance: Brute Force
+                        double[] dist = new double[dstFeat.Length];
+                        for (var j = 0; j < dstFeat.Length; ++j)
                         {
-                            minIndex = j;
-                            minDist2 = minDist;
-                            minDist = dist[j];
+                            dist[j] = getEuclidDistance(srcFeat[i].Descriptor, dstFeat[j].Descriptor);
                         }
-                        else if (dist[j] < minDist2)
+
+                        // Get 2-min distance points
+                        int minIndex;
+                        double minDist, minDist2;
+                        if (dist[0] < dist[1])
                         {
-                            minDist2 = dist[j];
+                            minIndex = 0;
+                            minDist = dist[0];
+                            minDist2 = dist[1];
+                        }
+                        else
+                        {
+                            minIndex = 1;
+                            minDist = dist[1];
+                            minDist2 = dist[0];
+                        }
+                        for (var j = 2; j < dstFeat.Length; ++j)
+                        {
+                            if (dist[j] < minDist)
+                            {
+                                minIndex = j;
+                                minDist2 = minDist;
+                                minDist = dist[j];
+                            }
+                            else if (dist[j] < minDist2)
+                            {
+                                minDist2 = dist[j];
+                            }
+                        }
+
+                        // If the distance is small enough. 
+                        if (minDist / minDist2 < SIFT_FEAT_DIST_THRESHOLD)
+                        {
+                            PointF pi = srcFeat[i].KeyPoint.Point;
+                            PointF pj = dstFeat[minIndex].KeyPoint.Point;
+                            pi.X += sumWidth;
+                            pj.X += sumWidth + imgStitchList[srcId].Width;
+                            matchGraph.DrawLine(matchPen, pi, pj);
+                            //rawMatchPairs.Add(new Tuple<int, int>(i, minIndex));
+                            srcPntList.Add(pi);
+                            dstPntList.Add(pj);
+                            ++matchCount;
                         }
                     }
+                    Console.WriteLine(String.Format("[{0}] <-> [{1}], {2} matching pairs.", srcId, dstId, matchCount));
+                    sumWidth += imgStitchList[srcId].Width;
 
-                    // If the distance is small enough. 
-                    // Get this magic number from http://dodoro.chouxiangpai.com/archives/299
-                    double THRESHOLD = 0.49;
-                    if (minDist / minDist2 < THRESHOLD)
+                    if (matchCount >= RANSAC_INIT_SET_SIZE)
                     {
-                        PointF pi = f1[i].KeyPoint.Point;
-                        PointF pj = f2[minIndex].KeyPoint.Point;
-                        pj.X += imgStitchList[0].Width;
-                        matchGraph.DrawLine(matchPen, pi, pj);
-                        //rawMatchPairs.Add(new Tuple<int, int>(i, minIndex));
-                        srcPntList.Add(pi);
-                        dstPntList.Add(pj);
-                        ++matchCount;
+                        // Use RANSAC (Ramdom Sample Consensus) as a filter
+                        HomographyMatrix hMat = CameraCalibration.FindHomography(srcPntList.ToArray(), dstPntList.ToArray(),
+                            Emgu.CV.CvEnum.HOMOGRAPHY_METHOD.RANSAC, RANSAC_REPROJ_THRESHOLD);
+                        
+                        if (hMat != null)
+                        {
+                            for (var r = 0; r < 3; ++r)
+                            {
+                                for (var c = 0; c < 3; ++c)
+                                    Console.Write(hMat[r, c] + ", ");
+                                Console.Write("\n");
+                            }
+                            hMatList.Add(hMat);
+
+                            // Show inliers
+                            for (var i = 0; i < srcPntList.Count; ++i)
+                            {
+                                // Calculate distance
+                                Matrix<double> srcPntMat, dstProjMat;
+                                double dstProjX, dstProjY;
+                                double dist;
+                                
+                                srcPntMat = new Matrix<double>(3, 1);
+                                srcPntMat[0, 0] = srcPntList[i].X;
+                                srcPntMat[1, 0] = srcPntList[i].Y;
+                                srcPntMat[2, 0] = 1;
+                                
+                                dstProjMat = hMat.Mul(srcPntMat);
+                                dstProjX = dstProjMat[0, 0] / dstProjMat[2, 0];
+                                dstProjY = dstProjMat[1, 0] / dstProjMat[2, 0];
+
+                                dist = Math.Sqrt(Math.Pow(dstProjX - dstPntList[i].X, 2) + Math.Pow(dstProjY - dstPntList[i].Y, 2));
+                                if (dist <= RANSAC_REPROJ_THRESHOLD)
+                                {
+                                    matchGraph.DrawLine(inlierPen, new Point((int)srcPntList[i].X, (int)srcPntList[i].Y),
+                                        new Point((int)dstPntList[i].X, (int)dstPntList[i].Y));
+                                }
+                                Console.WriteLine("No." + i + " distance: " + dist);
+                            }
+                        }
                     }
                 }
-                Console.WriteLine(matchCount + " matching pairs.");
 
-                // Use RANSAC (Ramdom Sample Consensus) as a filter
-                HomographyMatrix hMat = CameraCalibration.FindHomography(srcPntList.ToArray(), dstPntList.ToArray(), 
-                    Emgu.CV.CvEnum.HOMOGRAPHY_METHOD.RANSAC, RANSAC_REPROJ_THRESHOLD);
-                for (var r = 0; r < 3; ++r)
-                {
-                    for (var c = 0; c < 3; ++c)
-                        Console.Write(hMat[r, c] + ", ");
-                    Console.Write("\n");
-                }
-                // Show inliers
-                for (var i = 0; i < srcPntList.Count; ++i)
-                {
-                    // Calculate distance
-                    Matrix<double> srcPntMat, dstProjMat;
-                    double dstProjX, dstProjY;
-                    double dist;
-
-                    srcPntMat = new Matrix<double>(3, 1);
-                    srcPntMat[0, 0] = srcPntList[i].X;
-                    srcPntMat[1, 0] = srcPntList[i].Y;
-                    srcPntMat[2, 0] = 1;
-
-                    dstProjMat = hMat.Mul(srcPntMat);
-                    dstProjX = dstProjMat[0, 0] / dstProjMat[2, 0];
-                    dstProjY = dstProjMat[1, 0] / dstProjMat[2, 0];
-
-                    dist = Math.Sqrt(Math.Pow(dstProjX - dstPntList[i].X, 2) + Math.Pow(dstProjY - dstPntList[i].Y, 2));
-                    if (dist <= RANSAC_REPROJ_THRESHOLD)
-                    {
-                        matchGraph.DrawLine(inlierPen, new Point((int)srcPntList[i].X, (int)srcPntList[i].Y), 
-                            new Point((int)dstPntList[i].X, (int)dstPntList[i].Y));
-                    }
-                    Console.WriteLine("No." + i + " distance: " + dist);
-                }
             }
         }
 
