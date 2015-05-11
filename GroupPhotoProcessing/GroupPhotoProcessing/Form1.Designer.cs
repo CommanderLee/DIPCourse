@@ -69,6 +69,8 @@
             this.panelStitchImgNames = new System.Windows.Forms.Panel();
             this.labelStitch = new System.Windows.Forms.Label();
             this.panelImgMethodsStitch = new System.Windows.Forms.Panel();
+            this.buttonImageMatch = new System.Windows.Forms.Button();
+            this.buttonImageStitch = new System.Windows.Forms.Button();
             this.labelStatusStitch = new System.Windows.Forms.Label();
             this.buttonStitchPreparing = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
@@ -95,10 +97,10 @@
             this.tabControl1.Controls.Add(this.tabFusion);
             this.tabControl1.Controls.Add(this.tabStitch);
             this.tabControl1.Location = new System.Drawing.Point(8, 8);
-            this.tabControl1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabControl1.Margin = new System.Windows.Forms.Padding(2);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1170, 756);
+            this.tabControl1.Size = new System.Drawing.Size(1500, 810);
             this.tabControl1.TabIndex = 0;
             // 
             // tabPoint
@@ -107,10 +109,10 @@
             this.tabPoint.Controls.Add(this.panelImgNames);
             this.tabPoint.Controls.Add(this.panelImgMethods);
             this.tabPoint.Location = new System.Drawing.Point(4, 22);
-            this.tabPoint.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabPoint.Margin = new System.Windows.Forms.Padding(2);
             this.tabPoint.Name = "tabPoint";
-            this.tabPoint.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.tabPoint.Size = new System.Drawing.Size(1592, 874);
+            this.tabPoint.Padding = new System.Windows.Forms.Padding(2);
+            this.tabPoint.Size = new System.Drawing.Size(1492, 784);
             this.tabPoint.TabIndex = 0;
             this.tabPoint.Text = "PointProcessing";
             this.tabPoint.UseVisualStyleBackColor = true;
@@ -121,17 +123,17 @@
             this.panelImg.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.panelImg.Controls.Add(this.pictureBoxImg);
             this.panelImg.Location = new System.Drawing.Point(8, 106);
-            this.panelImg.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.panelImg.Margin = new System.Windows.Forms.Padding(2);
             this.panelImg.Name = "panelImg";
-            this.panelImg.Size = new System.Drawing.Size(1148, 618);
+            this.panelImg.Size = new System.Drawing.Size(1475, 665);
             this.panelImg.TabIndex = 2;
             // 
             // pictureBoxImg
             // 
             this.pictureBoxImg.Location = new System.Drawing.Point(0, 0);
-            this.pictureBoxImg.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.pictureBoxImg.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBoxImg.Name = "pictureBoxImg";
-            this.pictureBoxImg.Size = new System.Drawing.Size(1144, 613);
+            this.pictureBoxImg.Size = new System.Drawing.Size(1460, 650);
             this.pictureBoxImg.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBoxImg.TabIndex = 0;
             this.pictureBoxImg.TabStop = false;
@@ -141,9 +143,9 @@
             this.panelImgNames.BackColor = System.Drawing.Color.LightSteelBlue;
             this.panelImgNames.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.panelImgNames.Location = new System.Drawing.Point(8, 57);
-            this.panelImgNames.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.panelImgNames.Margin = new System.Windows.Forms.Padding(2);
             this.panelImgNames.Name = "panelImgNames";
-            this.panelImgNames.Size = new System.Drawing.Size(1148, 41);
+            this.panelImgNames.Size = new System.Drawing.Size(1475, 41);
             this.panelImgNames.TabIndex = 1;
             // 
             // panelImgMethods
@@ -166,16 +168,16 @@
             this.panelImgMethods.Controls.Add(this.labelStatus);
             this.panelImgMethods.Controls.Add(this.buttonLoad);
             this.panelImgMethods.Location = new System.Drawing.Point(8, 8);
-            this.panelImgMethods.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.panelImgMethods.Margin = new System.Windows.Forms.Padding(2);
             this.panelImgMethods.Name = "panelImgMethods";
-            this.panelImgMethods.Size = new System.Drawing.Size(1148, 41);
+            this.panelImgMethods.Size = new System.Drawing.Size(1475, 41);
             this.panelImgMethods.TabIndex = 0;
             // 
             // buttonImgType
             // 
             this.buttonImgType.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.buttonImgType.Location = new System.Drawing.Point(638, 2);
-            this.buttonImgType.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonImgType.Margin = new System.Windows.Forms.Padding(2);
             this.buttonImgType.Name = "buttonImgType";
             this.buttonImgType.Size = new System.Drawing.Size(82, 32);
             this.buttonImgType.TabIndex = 14;
@@ -189,7 +191,7 @@
             this.buttonGammaDec.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("buttonGammaDec.BackgroundImage")));
             this.buttonGammaDec.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.buttonGammaDec.Location = new System.Drawing.Point(375, 2);
-            this.buttonGammaDec.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonGammaDec.Margin = new System.Windows.Forms.Padding(2);
             this.buttonGammaDec.Name = "buttonGammaDec";
             this.buttonGammaDec.Size = new System.Drawing.Size(30, 32);
             this.buttonGammaDec.TabIndex = 13;
@@ -202,7 +204,7 @@
             this.buttonGammaInc.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("buttonGammaInc.BackgroundImage")));
             this.buttonGammaInc.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.buttonGammaInc.Location = new System.Drawing.Point(338, 2);
-            this.buttonGammaInc.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonGammaInc.Margin = new System.Windows.Forms.Padding(2);
             this.buttonGammaInc.Name = "buttonGammaInc";
             this.buttonGammaInc.Size = new System.Drawing.Size(30, 32);
             this.buttonGammaInc.TabIndex = 12;
@@ -215,7 +217,7 @@
             this.buttonBlueDec.Font = new System.Drawing.Font("Microsoft Sans Serif", 19F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.buttonBlueDec.ForeColor = System.Drawing.SystemColors.AppWorkspace;
             this.buttonBlueDec.Location = new System.Drawing.Point(600, 2);
-            this.buttonBlueDec.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonBlueDec.Margin = new System.Windows.Forms.Padding(2);
             this.buttonBlueDec.Name = "buttonBlueDec";
             this.buttonBlueDec.Size = new System.Drawing.Size(30, 32);
             this.buttonBlueDec.TabIndex = 11;
@@ -230,7 +232,7 @@
             this.buttonBlueInc.Font = new System.Drawing.Font("Microsoft Sans Serif", 19F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.buttonBlueInc.ForeColor = System.Drawing.SystemColors.AppWorkspace;
             this.buttonBlueInc.Location = new System.Drawing.Point(562, 2);
-            this.buttonBlueInc.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonBlueInc.Margin = new System.Windows.Forms.Padding(2);
             this.buttonBlueInc.Name = "buttonBlueInc";
             this.buttonBlueInc.Size = new System.Drawing.Size(30, 32);
             this.buttonBlueInc.TabIndex = 10;
@@ -244,7 +246,7 @@
             this.buttonGreenDec.BackColor = System.Drawing.Color.Lime;
             this.buttonGreenDec.Font = new System.Drawing.Font("Microsoft Sans Serif", 19F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.buttonGreenDec.Location = new System.Drawing.Point(525, 2);
-            this.buttonGreenDec.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonGreenDec.Margin = new System.Windows.Forms.Padding(2);
             this.buttonGreenDec.Name = "buttonGreenDec";
             this.buttonGreenDec.Size = new System.Drawing.Size(30, 32);
             this.buttonGreenDec.TabIndex = 9;
@@ -258,7 +260,7 @@
             this.buttonGreenInc.BackColor = System.Drawing.Color.Lime;
             this.buttonGreenInc.Font = new System.Drawing.Font("Microsoft Sans Serif", 19F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.buttonGreenInc.Location = new System.Drawing.Point(488, 2);
-            this.buttonGreenInc.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonGreenInc.Margin = new System.Windows.Forms.Padding(2);
             this.buttonGreenInc.Name = "buttonGreenInc";
             this.buttonGreenInc.Size = new System.Drawing.Size(30, 32);
             this.buttonGreenInc.TabIndex = 8;
@@ -272,7 +274,7 @@
             this.buttonRedDec.BackColor = System.Drawing.Color.Red;
             this.buttonRedDec.Font = new System.Drawing.Font("Microsoft Sans Serif", 19F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.buttonRedDec.Location = new System.Drawing.Point(450, 2);
-            this.buttonRedDec.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonRedDec.Margin = new System.Windows.Forms.Padding(2);
             this.buttonRedDec.Name = "buttonRedDec";
             this.buttonRedDec.Size = new System.Drawing.Size(30, 32);
             this.buttonRedDec.TabIndex = 7;
@@ -286,7 +288,7 @@
             this.buttonRedInc.BackColor = System.Drawing.Color.Red;
             this.buttonRedInc.Font = new System.Drawing.Font("Microsoft Sans Serif", 19F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.buttonRedInc.Location = new System.Drawing.Point(412, 2);
-            this.buttonRedInc.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonRedInc.Margin = new System.Windows.Forms.Padding(2);
             this.buttonRedInc.Name = "buttonRedInc";
             this.buttonRedInc.Size = new System.Drawing.Size(30, 32);
             this.buttonRedInc.TabIndex = 6;
@@ -301,7 +303,7 @@
             this.buttonContrastDec.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("buttonContrastDec.BackgroundImage")));
             this.buttonContrastDec.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.buttonContrastDec.Location = new System.Drawing.Point(300, 2);
-            this.buttonContrastDec.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonContrastDec.Margin = new System.Windows.Forms.Padding(2);
             this.buttonContrastDec.Name = "buttonContrastDec";
             this.buttonContrastDec.Size = new System.Drawing.Size(30, 32);
             this.buttonContrastDec.TabIndex = 5;
@@ -314,7 +316,7 @@
             this.buttonContrastInc.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("buttonContrastInc.BackgroundImage")));
             this.buttonContrastInc.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.buttonContrastInc.Location = new System.Drawing.Point(262, 2);
-            this.buttonContrastInc.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonContrastInc.Margin = new System.Windows.Forms.Padding(2);
             this.buttonContrastInc.Name = "buttonContrastInc";
             this.buttonContrastInc.Size = new System.Drawing.Size(30, 32);
             this.buttonContrastInc.TabIndex = 4;
@@ -327,7 +329,7 @@
             this.buttonBrightnessDec.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("buttonBrightnessDec.BackgroundImage")));
             this.buttonBrightnessDec.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.buttonBrightnessDec.Location = new System.Drawing.Point(225, 2);
-            this.buttonBrightnessDec.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonBrightnessDec.Margin = new System.Windows.Forms.Padding(2);
             this.buttonBrightnessDec.Name = "buttonBrightnessDec";
             this.buttonBrightnessDec.Size = new System.Drawing.Size(30, 32);
             this.buttonBrightnessDec.TabIndex = 3;
@@ -340,7 +342,7 @@
             this.buttonBrightnessInc.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("buttonBrightnessInc.BackgroundImage")));
             this.buttonBrightnessInc.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.buttonBrightnessInc.Location = new System.Drawing.Point(188, 2);
-            this.buttonBrightnessInc.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonBrightnessInc.Margin = new System.Windows.Forms.Padding(2);
             this.buttonBrightnessInc.Name = "buttonBrightnessInc";
             this.buttonBrightnessInc.Size = new System.Drawing.Size(30, 32);
             this.buttonBrightnessInc.TabIndex = 2;
@@ -362,7 +364,7 @@
             // 
             this.buttonLoad.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.buttonLoad.Location = new System.Drawing.Point(2, 2);
-            this.buttonLoad.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonLoad.Margin = new System.Windows.Forms.Padding(2);
             this.buttonLoad.Name = "buttonLoad";
             this.buttonLoad.Size = new System.Drawing.Size(82, 32);
             this.buttonLoad.TabIndex = 0;
@@ -377,10 +379,10 @@
             this.tabFusion.Controls.Add(this.panelGroupImgNames);
             this.tabFusion.Controls.Add(this.panelImgMethodsFusion);
             this.tabFusion.Location = new System.Drawing.Point(4, 22);
-            this.tabFusion.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabFusion.Margin = new System.Windows.Forms.Padding(2);
             this.tabFusion.Name = "tabFusion";
-            this.tabFusion.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.tabFusion.Size = new System.Drawing.Size(1162, 730);
+            this.tabFusion.Padding = new System.Windows.Forms.Padding(2);
+            this.tabFusion.Size = new System.Drawing.Size(1492, 784);
             this.tabFusion.TabIndex = 1;
             this.tabFusion.Text = "ImageFusion";
             this.tabFusion.UseVisualStyleBackColor = true;
@@ -392,17 +394,17 @@
             this.panelImgFusion.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.panelImgFusion.Controls.Add(this.pictureBoxImgFusion);
             this.panelImgFusion.Location = new System.Drawing.Point(8, 106);
-            this.panelImgFusion.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.panelImgFusion.Margin = new System.Windows.Forms.Padding(2);
             this.panelImgFusion.Name = "panelImgFusion";
-            this.panelImgFusion.Size = new System.Drawing.Size(1148, 618);
+            this.panelImgFusion.Size = new System.Drawing.Size(1475, 665);
             this.panelImgFusion.TabIndex = 4;
             // 
             // pictureBoxImgFusion
             // 
             this.pictureBoxImgFusion.Location = new System.Drawing.Point(0, 0);
-            this.pictureBoxImgFusion.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.pictureBoxImgFusion.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBoxImgFusion.Name = "pictureBoxImgFusion";
-            this.pictureBoxImgFusion.Size = new System.Drawing.Size(1525, 755);
+            this.pictureBoxImgFusion.Size = new System.Drawing.Size(1460, 650);
             this.pictureBoxImgFusion.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.pictureBoxImgFusion.TabIndex = 0;
             this.pictureBoxImgFusion.TabStop = false;
@@ -414,10 +416,10 @@
             this.panelSingleImgNames.BackColor = System.Drawing.Color.LightSteelBlue;
             this.panelSingleImgNames.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.panelSingleImgNames.Controls.Add(this.labelSingle);
-            this.panelSingleImgNames.Location = new System.Drawing.Point(585, 57);
-            this.panelSingleImgNames.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.panelSingleImgNames.Location = new System.Drawing.Point(745, 57);
+            this.panelSingleImgNames.Margin = new System.Windows.Forms.Padding(2);
             this.panelSingleImgNames.Name = "panelSingleImgNames";
-            this.panelSingleImgNames.Size = new System.Drawing.Size(571, 41);
+            this.panelSingleImgNames.Size = new System.Drawing.Size(735, 41);
             this.panelSingleImgNames.TabIndex = 3;
             // 
             // labelSingle
@@ -437,9 +439,9 @@
             this.panelGroupImgNames.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.panelGroupImgNames.Controls.Add(this.labelGroup);
             this.panelGroupImgNames.Location = new System.Drawing.Point(8, 57);
-            this.panelGroupImgNames.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.panelGroupImgNames.Margin = new System.Windows.Forms.Padding(2);
             this.panelGroupImgNames.Name = "panelGroupImgNames";
-            this.panelGroupImgNames.Size = new System.Drawing.Size(571, 41);
+            this.panelGroupImgNames.Size = new System.Drawing.Size(730, 41);
             this.panelGroupImgNames.TabIndex = 2;
             // 
             // labelGroup
@@ -463,16 +465,16 @@
             this.panelImgMethodsFusion.Controls.Add(this.labelStatusFusion);
             this.panelImgMethodsFusion.Controls.Add(this.buttonFusionPreparing);
             this.panelImgMethodsFusion.Location = new System.Drawing.Point(8, 8);
-            this.panelImgMethodsFusion.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.panelImgMethodsFusion.Margin = new System.Windows.Forms.Padding(2);
             this.panelImgMethodsFusion.Name = "panelImgMethodsFusion";
-            this.panelImgMethodsFusion.Size = new System.Drawing.Size(1148, 41);
+            this.panelImgMethodsFusion.Size = new System.Drawing.Size(1475, 41);
             this.panelImgMethodsFusion.TabIndex = 1;
             // 
             // buttonShowImg
             // 
             this.buttonShowImg.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.buttonShowImg.Location = new System.Drawing.Point(292, 2);
-            this.buttonShowImg.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonShowImg.Margin = new System.Windows.Forms.Padding(2);
             this.buttonShowImg.Name = "buttonShowImg";
             this.buttonShowImg.Size = new System.Drawing.Size(98, 32);
             this.buttonShowImg.TabIndex = 6;
@@ -484,7 +486,7 @@
             // 
             this.buttonImageFusion.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.buttonImageFusion.Location = new System.Drawing.Point(398, 2);
-            this.buttonImageFusion.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonImageFusion.Margin = new System.Windows.Forms.Padding(2);
             this.buttonImageFusion.Name = "buttonImageFusion";
             this.buttonImageFusion.Size = new System.Drawing.Size(98, 32);
             this.buttonImageFusion.TabIndex = 5;
@@ -496,7 +498,7 @@
             // 
             this.buttonClearBoundary.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.buttonClearBoundary.Location = new System.Drawing.Point(188, 2);
-            this.buttonClearBoundary.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonClearBoundary.Margin = new System.Windows.Forms.Padding(2);
             this.buttonClearBoundary.Name = "buttonClearBoundary";
             this.buttonClearBoundary.Size = new System.Drawing.Size(98, 32);
             this.buttonClearBoundary.TabIndex = 4;
@@ -519,7 +521,7 @@
             // 
             this.buttonFusionPreparing.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.buttonFusionPreparing.Location = new System.Drawing.Point(2, 2);
-            this.buttonFusionPreparing.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonFusionPreparing.Margin = new System.Windows.Forms.Padding(2);
             this.buttonFusionPreparing.Name = "buttonFusionPreparing";
             this.buttonFusionPreparing.Size = new System.Drawing.Size(82, 32);
             this.buttonFusionPreparing.TabIndex = 0;
@@ -533,31 +535,32 @@
             this.tabStitch.Controls.Add(this.panelStitchImgNames);
             this.tabStitch.Controls.Add(this.panelImgMethodsStitch);
             this.tabStitch.Location = new System.Drawing.Point(4, 22);
-            this.tabStitch.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabStitch.Margin = new System.Windows.Forms.Padding(2);
             this.tabStitch.Name = "tabStitch";
-            this.tabStitch.Size = new System.Drawing.Size(1162, 730);
+            this.tabStitch.Size = new System.Drawing.Size(1492, 784);
             this.tabStitch.TabIndex = 2;
             this.tabStitch.Text = "ImageStitch";
             this.tabStitch.UseVisualStyleBackColor = true;
             // 
             // panelImgStitch
             // 
+            this.panelImgStitch.AutoScroll = true;
             this.panelImgStitch.BackColor = System.Drawing.Color.LightSkyBlue;
             this.panelImgStitch.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.panelImgStitch.Controls.Add(this.pictureBoxImgStitch);
             this.panelImgStitch.Location = new System.Drawing.Point(8, 106);
-            this.panelImgStitch.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.panelImgStitch.Margin = new System.Windows.Forms.Padding(2);
             this.panelImgStitch.Name = "panelImgStitch";
-            this.panelImgStitch.Size = new System.Drawing.Size(1148, 618);
+            this.panelImgStitch.Size = new System.Drawing.Size(1475, 660);
             this.panelImgStitch.TabIndex = 5;
             // 
             // pictureBoxImgStitch
             // 
             this.pictureBoxImgStitch.Location = new System.Drawing.Point(0, 0);
-            this.pictureBoxImgStitch.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.pictureBoxImgStitch.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBoxImgStitch.Name = "pictureBoxImgStitch";
-            this.pictureBoxImgStitch.Size = new System.Drawing.Size(1525, 755);
-            this.pictureBoxImgStitch.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBoxImgStitch.Size = new System.Drawing.Size(1460, 650);
+            this.pictureBoxImgStitch.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.pictureBoxImgStitch.TabIndex = 0;
             this.pictureBoxImgStitch.TabStop = false;
             // 
@@ -567,9 +570,9 @@
             this.panelStitchImgNames.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.panelStitchImgNames.Controls.Add(this.labelStitch);
             this.panelStitchImgNames.Location = new System.Drawing.Point(8, 57);
-            this.panelStitchImgNames.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.panelStitchImgNames.Margin = new System.Windows.Forms.Padding(2);
             this.panelStitchImgNames.Name = "panelStitchImgNames";
-            this.panelStitchImgNames.Size = new System.Drawing.Size(1148, 41);
+            this.panelStitchImgNames.Size = new System.Drawing.Size(1475, 41);
             this.panelStitchImgNames.TabIndex = 3;
             // 
             // labelStitch
@@ -587,13 +590,39 @@
             // 
             this.panelImgMethodsStitch.BackColor = System.Drawing.Color.PaleTurquoise;
             this.panelImgMethodsStitch.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panelImgMethodsStitch.Controls.Add(this.buttonImageMatch);
+            this.panelImgMethodsStitch.Controls.Add(this.buttonImageStitch);
             this.panelImgMethodsStitch.Controls.Add(this.labelStatusStitch);
             this.panelImgMethodsStitch.Controls.Add(this.buttonStitchPreparing);
             this.panelImgMethodsStitch.Location = new System.Drawing.Point(8, 8);
-            this.panelImgMethodsStitch.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.panelImgMethodsStitch.Margin = new System.Windows.Forms.Padding(2);
             this.panelImgMethodsStitch.Name = "panelImgMethodsStitch";
-            this.panelImgMethodsStitch.Size = new System.Drawing.Size(1148, 41);
+            this.panelImgMethodsStitch.Size = new System.Drawing.Size(1475, 41);
             this.panelImgMethodsStitch.TabIndex = 2;
+            // 
+            // buttonImageMatch
+            // 
+            this.buttonImageMatch.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.buttonImageMatch.Location = new System.Drawing.Point(218, 2);
+            this.buttonImageMatch.Margin = new System.Windows.Forms.Padding(2);
+            this.buttonImageMatch.Name = "buttonImageMatch";
+            this.buttonImageMatch.Size = new System.Drawing.Size(98, 32);
+            this.buttonImageMatch.TabIndex = 7;
+            this.buttonImageMatch.Text = "Image Match";
+            this.buttonImageMatch.UseVisualStyleBackColor = true;
+            this.buttonImageMatch.Click += new System.EventHandler(this.buttonImageMatch_Click);
+            // 
+            // buttonImageStitch
+            // 
+            this.buttonImageStitch.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.buttonImageStitch.Location = new System.Drawing.Point(321, 2);
+            this.buttonImageStitch.Margin = new System.Windows.Forms.Padding(2);
+            this.buttonImageStitch.Name = "buttonImageStitch";
+            this.buttonImageStitch.Size = new System.Drawing.Size(98, 32);
+            this.buttonImageStitch.TabIndex = 6;
+            this.buttonImageStitch.Text = "Image Stitch";
+            this.buttonImageStitch.UseVisualStyleBackColor = true;
+            this.buttonImageStitch.Click += new System.EventHandler(this.buttonImageStitch_Click);
             // 
             // labelStatusStitch
             // 
@@ -610,7 +639,7 @@
             // 
             this.buttonStitchPreparing.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.buttonStitchPreparing.Location = new System.Drawing.Point(2, 2);
-            this.buttonStitchPreparing.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonStitchPreparing.Margin = new System.Windows.Forms.Padding(2);
             this.buttonStitchPreparing.Name = "buttonStitchPreparing";
             this.buttonStitchPreparing.Size = new System.Drawing.Size(82, 32);
             this.buttonStitchPreparing.TabIndex = 0;
@@ -622,9 +651,9 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1186, 774);
+            this.ClientSize = new System.Drawing.Size(1532, 837);
             this.Controls.Add(this.tabControl1);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.Text = "Group Photo Processing - Zhen Li - Tsinghua University";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -647,6 +676,7 @@
             this.panelImgMethodsFusion.PerformLayout();
             this.tabStitch.ResumeLayout(false);
             this.panelImgStitch.ResumeLayout(false);
+            this.panelImgStitch.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxImgStitch)).EndInit();
             this.panelStitchImgNames.ResumeLayout(false);
             this.panelStitchImgNames.PerformLayout();
@@ -700,6 +730,8 @@
         private System.Windows.Forms.Label labelStitch;
         private System.Windows.Forms.Panel panelImgStitch;
         private System.Windows.Forms.PictureBox pictureBoxImgStitch;
+        private System.Windows.Forms.Button buttonImageStitch;
+        private System.Windows.Forms.Button buttonImageMatch;
     }
 }
 
