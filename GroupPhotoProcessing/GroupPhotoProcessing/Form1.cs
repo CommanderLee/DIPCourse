@@ -1023,7 +1023,6 @@ namespace GroupPhotoProcessing
                 // Find biggest size for the new img
                 Image<Bgr, byte> newImg;
                 newImg = imgStitchList[srcId].WarpPerspective(homograph, Math.Max(topRight.X, bottomRight.X),
-                    Math.Max(currResultImg.Height, Math.Max(bottomLeft.Y, bottomRight.Y)), Emgu.CV.CvEnum.INTER.CV_INTER_LINEAR, 
                     Emgu.CV.CvEnum.WARP.CV_WARP_FILL_OUTLIERS, new Bgr(0, 0, 0));
 
                 System.Threading.Tasks.Parallel.For(0, newImg.Height, (r) =>
