@@ -73,6 +73,7 @@
             this.buttonImageStitch = new System.Windows.Forms.Button();
             this.labelStatusStitch = new System.Windows.Forms.Label();
             this.buttonStitchPreparing = new System.Windows.Forms.Button();
+            this.buttonHistogram = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPoint.SuspendLayout();
             this.panelImg.SuspendLayout();
@@ -152,6 +153,7 @@
             // 
             this.panelImgMethods.BackColor = System.Drawing.Color.PaleTurquoise;
             this.panelImgMethods.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panelImgMethods.Controls.Add(this.buttonHistogram);
             this.panelImgMethods.Controls.Add(this.buttonImgType);
             this.panelImgMethods.Controls.Add(this.buttonGammaDec);
             this.panelImgMethods.Controls.Add(this.buttonGammaInc);
@@ -176,7 +178,7 @@
             // buttonImgType
             // 
             this.buttonImgType.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.buttonImgType.Location = new System.Drawing.Point(638, 2);
+            this.buttonImgType.Location = new System.Drawing.Point(678, 2);
             this.buttonImgType.Margin = new System.Windows.Forms.Padding(2);
             this.buttonImgType.Name = "buttonImgType";
             this.buttonImgType.Size = new System.Drawing.Size(82, 32);
@@ -647,6 +649,21 @@
             this.buttonStitchPreparing.UseVisualStyleBackColor = true;
             this.buttonStitchPreparing.Click += new System.EventHandler(this.buttonStitchPreparing_Click);
             // 
+            // buttonHistogram
+            // 
+            this.buttonHistogram.BackColor = System.Drawing.Color.Transparent;
+            this.buttonHistogram.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("buttonHistogram.BackgroundImage")));
+            this.buttonHistogram.Font = new System.Drawing.Font("Microsoft Sans Serif", 19F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.buttonHistogram.ForeColor = System.Drawing.SystemColors.AppWorkspace;
+            this.buttonHistogram.Location = new System.Drawing.Point(640, 2);
+            this.buttonHistogram.Margin = new System.Windows.Forms.Padding(2);
+            this.buttonHistogram.Name = "buttonHistogram";
+            this.buttonHistogram.Size = new System.Drawing.Size(30, 32);
+            this.buttonHistogram.TabIndex = 15;
+            this.buttonHistogram.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.buttonHistogram.UseVisualStyleBackColor = false;
+            this.buttonHistogram.Click += new System.EventHandler(this.buttonHistogram_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -733,6 +750,7 @@
         private System.Windows.Forms.PictureBox pictureBoxImgStitch;
         private System.Windows.Forms.Button buttonImageStitch;
         private System.Windows.Forms.Button buttonImageMatch;
+        private System.Windows.Forms.Button buttonHistogram;
     }
 }
 

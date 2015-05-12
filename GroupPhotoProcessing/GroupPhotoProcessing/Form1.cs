@@ -340,6 +340,39 @@ namespace GroupPhotoProcessing
             doLUT(decBrightnessLUT, Channels.Blue);
         }
 
+        private void buttonHistogram_Click(object sender, EventArgs e)
+        {
+            // For each color channel
+            System.Threading.Tasks.Parallel.For(0, 3, (k) => 
+                {
+                    // Get p.d.f
+                    int[] histoCount = new int[256];
+                    for (var r = 0; r < imgList[currImgId].Height; ++r)
+                        for (var c = 0; c < imgList[currImgId].Width; ++c)
+                            ++histoCount[imgList[currImgId].Data[r, c, k]];
+
+                    // Get c.d.f
+                    int[] histoCulCount = new int[256];
+                    histoCulCount[0] = histoCount[0];
+                    for (var i = 1; i < 256; ++i)
+                        histoCulCount[i] = histoCulCount[i - 1] + histoCount[i];
+
+                    // Get LUT for k-channel
+                    int[] kChanLUT = new int[256];
+                    for (var i = 0; i < 256; ++i)
+                    {
+                        kChanLUT[i] = (int)((double)(histoCulCount[i]) / histoCulCount[255] * 255);
+                        if (kChanLUT[i] < 0)
+                            kChanLUT[i] = 0;
+                        else if (kChanLUT[i] > 255)
+                            kChanLUT[i] = 255;
+                    }
+
+                    // do LUT
+                    doLUT(kChanLUT, (Channels)k);
+                });
+        }
+
         /// <summary>
         /// Change current image type
         /// </summary>
@@ -1023,6 +1056,7 @@ namespace GroupPhotoProcessing
                 // Find biggest size for the new img
                 Image<Bgr, byte> newImg;
                 newImg = imgStitchList[srcId].WarpPerspective(homograph, Math.Max(topRight.X, bottomRight.X),
+                    Math.Max(currResultImg.Height, Math.Max(bottomLeft.Y, bottomRight.Y)), Emgu.CV.CvEnum.INTER.CV_INTER_NN, 
                     Emgu.CV.CvEnum.WARP.CV_WARP_FILL_OUTLIERS, new Bgr(0, 0, 0));
 
                 System.Threading.Tasks.Parallel.For(0, newImg.Height, (r) =>
@@ -1065,6 +1099,7 @@ namespace GroupPhotoProcessing
 
             pictureBoxImgStitch.Image = currResultImg.ToBitmap();
         }
+
 
     }
 }

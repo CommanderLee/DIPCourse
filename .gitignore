@@ -1,6 +1,7 @@
 # Zhen
 *.dll
 *.exe
+*.jpeg
 
 #################
 ## Eclipse
